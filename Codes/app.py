@@ -17,7 +17,7 @@ background = "#2D8A69"
 framefg = "white" 
 frame_clr= "#DBDBDB"
 
-font1 = ("Arial", 20, "bold") # for the entry fields, buttons
+font1 = ("Arial", 20) # for the entry fields, buttons
 font2 = ("Trebuchet MS", 15, "bold") # for the forget password and register label
 font3 =("Trebuchet MS", 50, "bold") # for the login label
 
@@ -30,11 +30,11 @@ def open_register():
     print("Register")
 
 # create a main frame
-mainFrame = ctk.CTkFrame(root, width=555, height=431, corner_radius=30, bg_color="transparent")
-mainFrame.grid(row=0, column=1, padx=350, pady=150)
+main_Frame = ctk.CTkFrame(root, width=555, height=431, corner_radius=30, bg_color="transparent")
+main_Frame.grid(row=0, column=1, padx=350, pady=150)
 
 # create a label for login
-login_label = Label(mainFrame,
+login_label = Label(main_Frame,
                     text="Login",
                     font=("Trebuchet MS", 50, "bold"),
                     bg=frame_clr,
@@ -44,7 +44,7 @@ login_label.place(x=200, y=18)
 
 
 # Entry field for username
-username = ctk.CTkEntry(mainFrame,
+username = ctk.CTkEntry(main_Frame,
                         width=487,
                         height=56, 
                         corner_radius=10, 
@@ -57,21 +57,22 @@ username = ctk.CTkEntry(mainFrame,
 username.place(x=40, y=130)
 
 # entry field for password
-password = ctk.CTkEntry(mainFrame,
+password = ctk.CTkEntry(main_Frame,
                         width=487,
                         height=56,
-                        corner_radius=10,font=("Arial", 20),
+                        corner_radius=10,
+                        font=font1,
                         show="*",
                         fg_color=background,
                         text_color=framefg,
                         placeholder_text="Password",
-                        placeholder_text_color="white")
+                        placeholder_text_color=framefg)
 
 password.place(x=40, y=210)
 
 
 # create a button for login
-login_btm = ctk.CTkButton(mainFrame,
+login_Btn = ctk.CTkButton(main_Frame,
                           text="Login",
                           width=120,height=40,
                           corner_radius=10,
@@ -79,41 +80,41 @@ login_btm = ctk.CTkButton(mainFrame,
                           command=lambda: print("Login"),
                           fg_color="#314C3B")
 
-login_btm.place(x=200, y=290)
+login_Btn.place(x=200, y=290)
 
 
 # create a forget password button and register button
-forget_btm = ctk.CTkButton(mainFrame, text="Foget Password?",
+forgot_Btn = ctk.CTkButton(main_Frame, text="Forgot Password?",
                       font=font2, text_color=background,
                       fg_color=frame_clr,
-                      command=lambda: print("Forget Password"),
+                      command=lambda: print("Forgot Password"),
                       hover_color=frame_clr,) #color match with the background for visibility of the text
-forget_btm.place(x=40, y=360)
+forgot_Btn.place(x=40, y=360)
 
-new_Account_btm = ctk.CTkButton(mainFrame, text="Don’t have Account ?",
+new_Account_Btn = ctk.CTkButton(main_Frame, text="Don’t have Account?",
                       font=font2, text_color=background,
                       fg_color=frame_clr,
                       command=open_register,
                       hover_color=frame_clr,) #color match with the background for visibility of the text
-new_Account_btm.place(x=350, y=360)
+new_Account_Btn.place(x=350, y=360)
 
 
 
 # create a image object with reference NOTE: for the logo
-imageOne = ImageTk.PhotoImage(Image.open("Assets/logo.png")) # open the image
+imageOne = ImageTk.PhotoImage(Image.open("Assets/logo.png").resize((150,115))) # open the image
 logo_icon = Label(root, image = imageOne, bg=background) # attach the image to a label
 logo_icon.image = imageOne # keep a reference to the image object to prevent garbage collection by python
 logo_icon.place(x= 20, y=0) # place the label in the window
 
 # create a image object with reference NOTE: for the user icon
 imageThree = ImageTk.PhotoImage(Image.open("Assets/user.png").resize((31,31))) # open the image
-User_icon = Label(mainFrame, image = imageThree, bg=background) # attach the image to a label
+User_icon = Label(main_Frame, image = imageThree, bg=background) # attach the image to a label
 User_icon.image = imageThree # keep a reference to the image object to prevent garbage collection by python
 User_icon.place(x= 470, y= 139) # place the label in the window
 
 # create a image object with reference NOTE: for the password icon
 imageTwo = ImageTk.PhotoImage(Image.open("Assets/password.png").resize((31,31))) # open the image
-password_icon = Label(mainFrame, image = imageTwo, bg=background) # attach the image to a label
+password_icon = Label(main_Frame, image = imageTwo, bg=background) # attach the image to a label
 password_icon.image = imageTwo # keep a reference to the image object to prevent garbage collection by python
 password_icon.place(x= 470, y=218, ) # place the label in the window
 
