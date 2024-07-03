@@ -4,6 +4,7 @@ from PIL import Image, ImageTk
 from tkinter import messagebox
 import customtkinter as ctk
 import sqlite3 as db
+from user import User
 
 root = Tk()
 root.title("British Gurkhas recruitment process")
@@ -117,7 +118,36 @@ see_gpa.place(x=900, y=365)
 blood_grp = ctk.CTkEntry(form_Frame, width=208, height=56, font=font1, placeholder_text="Blood Group", border_color=frame_clr)
 blood_grp.place(x=900, y=450)
 
-next_btn = ctk.CTkButton(root, text="Next", width=120, height=40, corner_radius=10, font=font2, fg_color="#314C3B", bg_color=frame_clr)
+
+def get_user_data():
+    user = User(
+        first_name=first_name.get(),
+        surname=surname.get(),
+        passport_no=passport_no.get(),
+        nnp_no=nnp_no.get(),
+        father_name=father_name.get(),
+        mother_name=mother_name.get(),
+        see_year=see_year.get(),
+        main_thar=main_thar.get(),
+        attempt=attepmpt.get(),
+        religion=religion.get(),
+        district=district.get(),
+        village=village.get(),
+        dob_ad=dob_ad.get(),
+        dob_bd=dob_bd.get(),
+        contact_no=contact_no.get(),
+        kin_contact=kin_contact.get(),
+        see_gpa=see_gpa.get(),
+        blood_grp=blood_grp.get()
+    )
+    return user
+
+def on_next_click():
+    user = get_user_data()
+    print(user.__dict__)
+    return user
+
+next_btn = ctk.CTkButton(root, text="Next", width=120, height=40, corner_radius=10, font=font2, fg_color="#314C3B", bg_color=frame_clr,command=on_next_click)
 next_btn.place(x=573, y=725)
 
 
