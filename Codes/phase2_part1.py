@@ -73,24 +73,24 @@ heading_lbl.place(x=235, y=50)
 # Entry Fields for Application Form
 # First Column
 
-full_name = ctk.CTkEntry(form_Frame, width=1000, height=56, font=font1, placeholder_text="Name of Applicant (In Full)".upper(), border_color=frame_clr)
+full_name = ctk.CTkEntry(form_Frame, width=1000, height=56, corner_radius=10,font=font1, placeholder_text="Name of Applicant (In Full)".upper(), border_color=frame_clr)
 full_name.place(x=80, y=110)
 
-address = ctk.CTkEntry(form_Frame, width=650, height=56, font=font1, placeholder_text="Address of Applicant".upper(),  border_color=frame_clr)
+address = ctk.CTkEntry(form_Frame, width=650, height=56, corner_radius=10,font=font1, placeholder_text="Address of Applicant".upper(),  border_color=frame_clr)
 address.place(x=80, y=195)
 
-email = ctk.CTkEntry(form_Frame, width=650, height=56, font=font1, placeholder_text="Email Address".upper(), border_color=frame_clr)
+email = ctk.CTkEntry(form_Frame, width=650, height=56, corner_radius=10,font=font1, placeholder_text="Email Address".upper(), border_color=frame_clr)
 email.place(x=80, y=280)
 
-citizenship = ctk.CTkEntry(form_Frame, width=1000, height=56, font=font1, placeholder_text="NEPALESE CITIZENSHIP CERTIFICATE NO OF APPLICANT".upper(), border_color=frame_clr)
+citizenship = ctk.CTkEntry(form_Frame, width=1000, height=56, corner_radius=10,font=font1, placeholder_text="NEPALESE CITIZENSHIP CERTIFICATE NO OF APPLICANT".upper(), border_color=frame_clr)
 citizenship.place(x=80, y=365)
 
 # Second Column
 
-date_of_birth = ctk.CTkEntry(form_Frame, width=300, height=56, font=font1, placeholder_text="Date of Birth (AD)".upper(), border_color=frame_clr)
+date_of_birth = ctk.CTkEntry(form_Frame, width=300, height=56, corner_radius=10,font=font1, placeholder_text="Date of Birth (AD)".upper(), border_color=frame_clr)
 date_of_birth.place(x=780, y=195)
 
-telephone_number = ctk.CTkEntry(form_Frame, width=300, height=56, font=font1, placeholder_text="Telephone Number".upper(), border_color=frame_clr)
+telephone_number = ctk.CTkEntry(form_Frame, width=300, height=56, corner_radius=10,font=font1, placeholder_text="Telephone Number".upper(), border_color=frame_clr)
 telephone_number.place(x=780, y=280)
 
 
