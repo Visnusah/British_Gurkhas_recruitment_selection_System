@@ -3,6 +3,7 @@ from PIL import Image, ImageTk
 from tkinter import messagebox
 import customtkinter as ctk
 import sqlite3 as db
+from threading import *
 
 # main window
 root = Tk()
@@ -22,12 +23,10 @@ root.config(bg=background)
 root.resizable(False, False)
 root.geometry("1250x700+210+100")
 
-def back():
-    global main_Frame
-    main_Frame.destroy()
-    create_login_frame()
+    
 
 def create_login_frame():
+    
     global main_Frame, username, password
     main_Frame = ctk.CTkFrame(master=root, width=555, height=431, corner_radius=30)
     main_Frame.grid(row=0, column=1, padx=350, pady=150)
@@ -54,8 +53,8 @@ def create_login_frame():
                                hover_color=frame_clr)
     forgot_Btn.place(x=40, y=360)
     
-    new_Account_Btn = ctk.CTkButton(main_Frame, text="Don’t have Account?", font=font2, text_color=background,
-                                    fg_color=frame_clr, command=open_register, hover_color=frame_clr)
+    new_Account_Btn = ctk.CTkButton(main_Frame, text="Don't have Account?", font=font2, text_color=background,
+                                    fg_color=frame_clr, command=threading, hover_color=frame_clr)
     new_Account_Btn.place(x=350, y=360)
     
     try:
@@ -75,6 +74,18 @@ def create_login_frame():
         password_icon.place(x=470, y=218)
     except Exception as e:
         messagebox.showerror("Image Error", str(e))
+        
+
+def threading():
+    main_Frame.destroy()
+    t1 = Thread(target=open_register)
+    t1.start()
+
+    
+def threading2():
+    main_Frame.destroy()
+    t2= Thread(target=create_login_frame)
+    t2.start()
 
 def open_register():
     global main_Frame
@@ -150,7 +161,7 @@ def open_register():
                                          text_color="black",
                                          fg_color=frame_clr,
                                          hover_color=frame_clr,
-                                         command=back)
+                                         command=threading2)
 
     already_have_account.place(x=258, y=486)
     
