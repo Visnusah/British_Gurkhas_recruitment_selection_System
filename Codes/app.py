@@ -5,6 +5,19 @@ import customtkinter as ctk
 import sqlite3 as db
 from threading import *
 
+# Thread for opening register frame because it takes time to load
+def threading():
+    main_Frame.destroy()
+    t1 = Thread(target=open_register)
+    t1.start()
+
+    
+# Thread for opening login frame because it takes time to load
+def threading2():
+    main_Frame.destroy()
+    t2= Thread(target=create_login_frame)
+    t2.start()
+
 # main window
 root = Tk()
 root.title("British Gurkhas recruitment process")
@@ -23,8 +36,15 @@ root.config(bg=background)
 root.resizable(False, False)
 root.geometry("1250x700+210+100")
 
-    
+# show message box when closing the window
+def on_closing():
+    if messagebox.askokcancel("Quit", "Do you want to quit?"):
+        root.destroy()
+        
+root.protocol("WM_DELETE_WINDOW", on_closing) # call on_closing function when closing the window
 
+    
+# Login Frame
 def create_login_frame():
     
     global main_Frame, username, password
@@ -75,18 +95,7 @@ def create_login_frame():
     except Exception as e:
         messagebox.showerror("Image Error", str(e))
         
-
-def threading():
-    main_Frame.destroy()
-    t1 = Thread(target=open_register)
-    t1.start()
-
-    
-def threading2():
-    main_Frame.destroy()
-    t2= Thread(target=create_login_frame)
-    t2.start()
-
+# Register Frame
 def open_register():
     global main_Frame
     main_Frame.destroy()
@@ -164,7 +173,9 @@ def open_register():
                                          command=threading2)
 
     already_have_account.place(x=258, y=486)
-    
+
+
+# Phase 1    
 def open_phase1():
     global main_Frame
     
@@ -235,15 +246,6 @@ def open_phase1():
     next_btn.place(x=573, y=725)
     
     
-
-
-# show message box when closing the window
-def on_closing():
-    if messagebox.askokcancel("Quit", "Do you want to quit?"):
-        root.destroy()
-        
-root.protocol("WM_DELETE_WINDOW", on_closing) # call on_closing function when closing the window
-
 try:
     conn = db.connect("database.db")
     cursor = conn.cursor()
