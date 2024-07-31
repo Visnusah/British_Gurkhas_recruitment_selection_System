@@ -258,12 +258,13 @@ def send_registration_email(email, name, password, phone, dob):
 
 def logout():
     main_frame.destroy()
+    logout_btn.destroy()
     t3 = Thread(target=create_login_frame)
     t3.start()
         
 # Phase 1    
 def open_phase1():
-    global main_frame, root
+    global main_frame, root, logout_btn
     
     # create a main frame
     main_frame = ctk.CTkFrame(root, width=1157, height=600, corner_radius=30, bg_color="transparent")
