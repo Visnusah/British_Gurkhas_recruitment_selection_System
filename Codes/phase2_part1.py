@@ -4,7 +4,9 @@ from PIL import Image, ImageTk
 from tkinter import messagebox
 import customtkinter as ctk
 import sqlite3 as db
-from user import User
+from models.army import Army
+from models.helper import get_splitted_name
+from testfile import open_phase2_part2
 
 root = Tk()
 root.title("British Gurkhas recruitment process")
@@ -94,31 +96,29 @@ telephone_number = ctk.CTkEntry(form_Frame, width=300, height=56, corner_radius=
 telephone_number.place(x=780, y=280)
 
 
-def get_user_data():
-    user = User(
-        full_name=full_name.get(),
-        passport_no=passport_no.get(),
-        nnp_no=address.get(),
-        father_name=email.get(),
-        mother_name=mother_name.get(),
-        see_year=see_year.get(),
-        main_thar=main_thar.get(),
-        attempt=date_of_birth.get(),
-        religion=telephone_number.get(),
+
+def get_army_data():
+    fname, mname,lname = get_splitted_name(full_name.get())
+    army = Army(
+        first_name=fname,
+        middle_name=mname,
+        surname=lname,
+        address_location=address.get(),
+        email=email.get(),
+        dob_ad=date_of_birth.get(),
+        telephone_number=telephone_number.get(),
     )
-    return user
+    return army
 
-def on_next_click():
-    user = get_user_data()
-    print(user.__dict__)
-    return user
+def on_next_click(root):
+    army = get_army_data()
+    print(army.__dict__)
+    open_phase2_part2(root)
+    # return army
 
 
-next_btn = ctk.CTkButton(root, text="Next", width=130, height=45, corner_radius=10, font=next_btn_font, fg_color="#2D8A69", bg_color=frame_clr,command=on_next_click)
+next_btn = ctk.CTkButton(root, text="Next", width=130, height=45, corner_radius=10, font=next_btn_font, fg_color="#2D8A69", bg_color=frame_clr,command=lambda: on_next_click(root))
 next_btn.place(x=573, y=590)
-
-
-
 
 
 

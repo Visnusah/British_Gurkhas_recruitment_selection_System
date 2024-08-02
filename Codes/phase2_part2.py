@@ -6,6 +6,10 @@ import customtkinter as ctk
 import sqlite3 as db
 from user import User
 
+from models.army import Army
+from .models.emergency_contact import FirstEmergencyContact,SecondEmergencyContact
+
+
 root = Tk()
 root.title("British Gurkhas recruitment process")
 root.maxsize(1280, 770)
@@ -77,62 +81,57 @@ heading_lbl.place(x=235, y=20)
 part2_lbl = Label(form_Frame, text="First Contact:".upper(), font=subheading_font,bg=frame_clr)
 part2_lbl.place(x=80, y=75)
 
-detail_full_name = ctk.CTkEntry(form_Frame, width=1000, height=56, font=font1,corner_radius=10, placeholder_text="Detail Full Name".upper(), border_color=frame_clr)
-detail_full_name.place(x=80, y=110)
+fec_full_name = ctk.CTkEntry(form_Frame, width=1000, height=56, font=font1,corner_radius=10, placeholder_text="Detail Full Name".upper(), border_color=frame_clr)
+fec_full_name.place(x=80, y=110)
 
-address = ctk.CTkEntry(form_Frame, width=720, height=56, font=font1, corner_radius=10,placeholder_text="Address".upper(),  border_color=frame_clr)
-address.place(x=80, y=175)
+fec_address = ctk.CTkEntry(form_Frame, width=720, height=56, font=font1, corner_radius=10,placeholder_text="Address".upper(),  border_color=frame_clr)
+fec_address.place(x=80, y=175)
 
-email = ctk.CTkEntry(form_Frame, width=550, height=56, font=font1, corner_radius=10,placeholder_text="Mobile Number".upper(), border_color=frame_clr)
-email.place(x=80, y=240)
+fec_mobile_number = ctk.CTkEntry(form_Frame, width=550, height=56, font=font1, corner_radius=10,placeholder_text="Mobile Number".upper(), border_color=frame_clr)
+fec_mobile_number.place(x=80, y=240)
 
 
 part3_lbl = Label(form_Frame, text="Second Contact:".upper(), font=subheading_font,bg=frame_clr)
 part3_lbl.place(x=80, y=300)
 
-detail_full_name = ctk.CTkEntry(form_Frame, width=1000, height=56, font=font1, corner_radius=10,placeholder_text="Detail Full Name".upper(), border_color=frame_clr)
-detail_full_name.place(x=80, y=335)
+sec_full_name = ctk.CTkEntry(form_Frame, width=1000, height=56, font=font1, corner_radius=10,placeholder_text="Detail Full Name".upper(), border_color=frame_clr)
+sec_full_name.place(x=80, y=335)
 
-address = ctk.CTkEntry(form_Frame, width=720, height=56, font=font1,corner_radius=10, placeholder_text="Address".upper(),  border_color=frame_clr)
-address.place(x=80, y=400)
+sec_address = ctk.CTkEntry(form_Frame, width=720, height=56, font=font1,corner_radius=10, placeholder_text="Address".upper(),  border_color=frame_clr)
+sec_address.place(x=80, y=400)
 
-email = ctk.CTkEntry(form_Frame, width=550, height=56, font=font1, corner_radius=10,placeholder_text="Mobile Number".upper(), border_color=frame_clr)
-email.place(x=80, y=465)
+sec_mobile_number = ctk.CTkEntry(form_Frame, width=550, height=56, font=font1, corner_radius=10,placeholder_text="Mobile Number".upper(), border_color=frame_clr)
+sec_mobile_number.place(x=80, y=465)
 
 # Second Column
 
-date_of_birth = ctk.CTkEntry(form_Frame, width=260, height=56, font=font1, corner_radius=10,placeholder_text="Date of Birth (AD)".upper(), border_color=frame_clr)
-date_of_birth.place(x=820, y=175)
+fec_date_of_birth = ctk.CTkEntry(form_Frame, width=260, height=56, font=font1, corner_radius=10,placeholder_text="Date of Birth (AD)".upper(), border_color=frame_clr)
+fec_date_of_birth.place(x=820, y=175)
 
-telephone_number = ctk.CTkEntry(form_Frame, width=430, height=56, font=font1, corner_radius=10,placeholder_text="Telephone Number".upper(), border_color=frame_clr)
-telephone_number.place(x=650, y=240)
-
-
-date_of_birth = ctk.CTkEntry(form_Frame, width=260, height=56, font=font1, corner_radius=10,placeholder_text="Date of Birth (AD)".upper(), border_color=frame_clr)
-date_of_birth.place(x=820, y=400)
-
-telephone_number = ctk.CTkEntry(form_Frame, width=430, height=56, font=font1, corner_radius=10,placeholder_text="Telephone Number".upper(), border_color=frame_clr)
-telephone_number.place(x=650, y=465)
+fec_telephone_number = ctk.CTkEntry(form_Frame, width=430, height=56, font=font1, corner_radius=10,placeholder_text="Telephone Number".upper(), border_color=frame_clr)
+fec_telephone_number.place(x=650, y=240)
 
 
-def get_user_data():
-    user = User(
-        full_name=detail_full_name.get(),
-        passport_no=passport_no.get(),
-        nnp_no=address.get(),
-        father_name=email.get(),
-        mother_name=mother_name.get(),
-        see_year=see_year.get(),
-        main_thar=main_thar.get(),
-        attempt=date_of_birth.get(),
-        religion=telephone_number.get(),
+sec_date_of_birth = ctk.CTkEntry(form_Frame, width=260, height=56, font=font1, corner_radius=10,placeholder_text="Date of Birth (AD)".upper(), border_color=frame_clr)
+sec_date_of_birth.place(x=820, y=400)
+
+sec_telephone_number = ctk.CTkEntry(form_Frame, width=430, height=56, font=font1, corner_radius=10,placeholder_text="Telephone Number".upper(), border_color=frame_clr)
+sec_telephone_number.place(x=650, y=465)
+
+
+def get_army_data():
+    first_emergency_contact = FirstEmergencyContact(full_name=fec_full_name.get(),address=fec_address.get(),mobile_number=fec_mobile_number.get(),dob_ad=fec_date_of_birth.get(),telephone_num=fec_telephone_number.get())
+    second_emergency_contact = SecondEmergencyContact(full_name=sec_full_name.get(),address=sec_address.get(),mobile_number=sec_mobile_number.get(),dob_ad=sec_date_of_birth.get(),telephone_num=sec_telephone_number.get())
+    army = Army(
+        first_emergency_contact=first_emergency_contact,
+        second_emergency_contact=second_emergency_contact
     )
-    return user
 
 def on_next_click():
-    user = get_user_data()
-    print(user.__dict__)
-    return user
+    army = get_army_data()
+    print(army.__dict__)
+    # return user
+    pass
 
 
 next_btn = ctk.CTkButton(root, text="Next", width=130, height=45, corner_radius=10, font=next_btn_font, fg_color="#2D8A69", bg_color=frame_clr,command=on_next_click)
