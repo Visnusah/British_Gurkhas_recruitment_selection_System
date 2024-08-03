@@ -2,3 +2,5 @@ venv/
 Codes/.DS_Store
 .DS_Store
 Codes/__pycache__/
+Codes/db/__pycache__/
+Codes/models/__pycache__/

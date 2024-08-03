@@ -48,41 +48,10 @@ def execute_query(query):
                 return cursor.fetchall()
             else:
                 connection.commit()
-                return cursor.rowcount
+                return cursor.lastrowid
         else:
             messagebox.showerror("Error", "No database connection established")
             return None
     except (sqlite3.Error, mysql.connector.Error) as error:
         messagebox.showerror("Error", f"Error: {error}")
         return None
-
-
-name = "pratiksha"
-
-# # access garnae way/place  --> main thread / inside class / outside class
-
-# # main
-name.capitalize()
-
-# class Human:
-#     def __init__(self,name_incoming):  # initalize --> dunder method 
-#         self.name_variable = name_incoming
-
-# h = Human("pratiksha")
-# h.name_variable
-
-
-# class LList:
-#     def __init__(self,item):
-#         pass
-#     def push(self,item):
-#         pass
-
-
-# ll = LList(1)  
-# ll.push(1)
-
-# l = list(1)
-# l.append(2)
-
-
