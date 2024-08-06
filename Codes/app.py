@@ -36,8 +36,8 @@ def threading():
     main_Frame.destroy()
     t1 = Thread(target=open_register)
     t1.start()
-
-    
+    main_Frame.destroy()
+ 
 # Thread for opening login frame because it takes time to load
 def threading2():
     main_Frame.destroy()
@@ -58,6 +58,15 @@ font1 = ("Arial", 20)
 font2 = ("Trebuchet MS", 15, "bold")
 font3 = ("Trebuchet MS", 50, "bold")
 
+font1 = ("Arial", 20) # for the entry fields, buttons
+logout_font = ("Trebuchet MS", 15, "bold") # for the forget password and register label
+next_btn_font = ("Trebuchet MS", 17, "bold") # for the forget password and register label
+phase_font = ("Trebuchet MS", 30, "bold") # for the login label
+part1_font = ("Trebuchet MS", 20, "bold") # for the login label
+part2_font = ("Trebuchet MS", 20, "bold") # for the login label
+heading_font = ("Trebuchet MS", 17, "bold") # for the login label
+subheading_font = ("Trebuchet MS", 17, "bold") # for the login label
+
 root.config(bg=background)
 root.resizable(False, False)
 root.geometry("1250x700+210+100")
@@ -75,7 +84,7 @@ def open_register():
     main_Frame.destroy()
     
     main_Frame = ctk.CTkFrame(root, width=724, height=587, corner_radius=30)
-    main_Frame.grid(row=0, column=1, padx=278, pady=122)
+    main_Frame.grid(row=0, column=0, padx=278, pady=122)
 
     Sign_up_label = Label(main_Frame,
                           text="Sign Up",
@@ -245,7 +254,7 @@ def send_registration_email(email, name, password, phone, dob):
     try:
         server = smtplib.SMTP_SSL("mail.sharmaanand.com.np", 465)  
         server.login("info@sharmaanand.com.np", "admin@444$")
-        message = MIMEText(f"Dear {name},\n\nThank you for registering with us!\n\nHere are your registration details:\n\nName: {name}\nEmail: {email}\nPhone Number: {phone}\nDate of Birth: {dob}\nPassword: {password}\n\nBest regards,\nAnand Sharma", "plain")
+        message = MIMEText(f"Dear {name},\n\nThank you for registering with us!\n\nHere are your registration details:\n\nName: {name}\nEmail:{email}\nPhone Number: {phone}\nDate of Birth: {dob}\nPassword: {password}\n\nBest regards,\nAnand Sharma", "plain")
         message["Subject"] = "Registration Confirmation"
         message["From"] = "info@sharmaanand.com.np"
         message["To"] = email
@@ -261,14 +270,57 @@ def logout():
     logout_btn.destroy()
     t3 = Thread(target=create_login_frame)
     t3.start()
-        
+
+    
+def open_phase2_part1():
+    main_frame.destroy()
+    t4 = Thread(target=phase2_part1)
+    t4.start()
+    main_Frame.destroy()
+    
+def open_phase2_part2():
+    main_frame.destroy()
+    t5 = Thread(target=phase2_part2)
+    t5.start()
+    main_Frame.destroy()
+    
+def medical_test():
+    main_frame.destroy()
+    t6 = Thread(target=phase3)
+    t6.start()
+    main_Frame.destroy()
+    
+def back_to_phase3():
+    main_frame.destroy()
+    t6 = Thread(target=phase3)
+    t6.start()
+    main_Frame.destroy()
+
+def back_to_phase1():
+    main_frame.destroy()
+    t6 = Thread(target=open_phase1)
+    t6.start()
+    main_Frame.destroy()
+    
+def back_to_phase2_part1():
+    main_frame.destroy()
+    t6 = Thread(target=phase2_part1)
+    t6.start()
+    main_Frame.destroy()
+
+def back_to_phase2_part2():
+    main_frame.destroy()
+    t6 = Thread(target=phase2_part2)
+    t6.start()
+    main_Frame.destroy()
+    
 # Phase 1    
 def open_phase1():
     global main_frame, root, logout_btn
     
     # create a main frame
     main_frame = ctk.CTkFrame(root, width=1157, height=600, corner_radius=30, bg_color="transparent")
-    main_frame.grid(row=0, column=1, padx=61, pady=189)
+    main_frame.grid(row=0, column=1, padx=61, pady=150)
     
     # Entry Fields for Application Form
     # First Column
@@ -333,9 +385,261 @@ def open_phase1():
     logout_btn = ctk.CTkButton(root, text="Log Out", width=100, height=40, font=font2, command=logout, fg_color="#314C3B", hover_color=background)
     logout_btn.place(x=1150, y=10)
     
-    next_btn = ctk.CTkButton(main_frame, text="Next", width=120, height=40, corner_radius=10, font=font2, fg_color="#314C3B", bg_color=frame_clr)
+    next_btn = ctk.CTkButton(main_frame, text="Next", width=120, height=40, corner_radius=10, font=font2, fg_color="#314C3B", bg_color=frame_clr,command=open_phase2_part1)
     next_btn.place(x=500, y=540)
     
+# Phase 2 part one
+def phase2_part1():
+    global main_frame
+    # create a main frame
+    main_frame = ctk.CTkFrame(root, width=1157, height=520, corner_radius=30, bg_color="transparent")
+    main_frame.grid(row=0, column=1, padx=61, pady=140)
+
+    part1_lbl = Label(main_frame, text="Part 1".upper(), font=part1_font,bg=frame_clr)
+    part1_lbl.place(x=20, y=5)
+
+    heading_lbl = Label(main_frame, text="Applicant's Details - Must be Completed by the Applicant:".upper(), font=heading_font,bg=frame_clr)
+    heading_lbl.place(x=235, y=50)
+
+    # Entry Fields for Application Form
+    # First Column
+    full_name = ctk.CTkEntry(main_frame, width=1000, height=56, corner_radius=10,font=font1, placeholder_text="Name of Applicant (In Full)".upper(), border_color=frame_clr)
+    full_name.place(x=80, y=110)
+
+    address = ctk.CTkEntry(main_frame, width=650, height=56, corner_radius=10,font=font1, placeholder_text="Address of Applicant".upper(),  border_color=frame_clr)
+    address.place(x=80, y=195)
+    
+    email = ctk.CTkEntry(main_frame, width=650, height=56, corner_radius=10,font=font1, placeholder_text="Email Address".upper(), border_color=frame_clr)
+    email.place(x=80, y=280)
+
+    citizenship = ctk.CTkEntry(main_frame, width=1000, height=56, corner_radius=10,font=font1, placeholder_text="NEPALESE CITIZENSHIP CERTIFICATE NO OF APPLICANT".upper(), border_color=frame_clr)
+    citizenship.place(x=80, y=365)
+
+    # Second Column
+    date_of_birth = ctk.CTkEntry(main_frame, width=300, height=56, corner_radius=10,font=font1, placeholder_text="Date of Birth (AD)".upper(), border_color=frame_clr)
+    date_of_birth.place(x=780, y=195)
+
+    telephone_number = ctk.CTkEntry(main_frame, width=300, height=56, corner_radius=10,font=font1, placeholder_text="Telephone Number".upper(), border_color=frame_clr)
+    telephone_number.place(x=780, y=280)
+
+    next_btn = ctk.CTkButton(main_frame, text="Next", width=130, height=45, corner_radius=10, font=next_btn_font, fg_color="#314C3B", bg_color=frame_clr,command=open_phase2_part2)
+    next_btn.place(x=980, y=455)
+    
+    back_btn = ctk.CTkButton(main_frame, text="back", width=130, height=45, corner_radius=10, font=next_btn_font, fg_color="#314C3B", bg_color=frame_clr,command=back_to_phase1)
+    back_btn.place(x=30,y=445)
+
+def phase2_part2():
+    global main_frame
+    # create a main frame
+    main_frame = ctk.CTkFrame(root, width=1157, height=590, corner_radius=30, bg_color="transparent")
+    main_frame.grid(row=0, column=1, padx=61, pady=120)
+
+    part2_lbl = Label(main_frame, text="Part 2".upper(), font=font1,bg=frame_clr)
+    part2_lbl.place(x=20, y=5)
+
+    heading_lbl = Label(main_frame, text="EMERGENCY CONTACT DETAIL - MUST BE COMPLETED BY THE APPLICANT:".upper(), font=heading_font,bg=frame_clr)
+    heading_lbl.place(x=235, y=20)
+
+    # Entry Fields for Application Form
+    # First Column
+    part2_lbl = Label(main_frame, text="First Contact:".upper(), font=part2_font,bg=frame_clr)
+    part2_lbl.place(x=80, y=75)
+
+    fec_full_name = ctk.CTkEntry(main_frame, width=1000, height=56, font=font1,corner_radius=10, placeholder_text="Detail Full Name".upper(), border_color=frame_clr)
+    fec_full_name.place(x=80, y=110)
+
+    fec_address = ctk.CTkEntry(main_frame, width=720, height=56, font=font1, corner_radius=10,placeholder_text="Address".upper(),  border_color=frame_clr)
+    fec_address.place(x=80, y=175)
+
+    fec_mobile_number = ctk.CTkEntry(main_frame, width=550, height=56, font=font1, corner_radius=10,placeholder_text="Mobile Number".upper(), border_color=frame_clr)
+    fec_mobile_number.place(x=80, y=240)
+
+    part3_lbl = Label(main_frame, text="Second Contact:".upper(), font=subheading_font,bg=frame_clr)
+    part3_lbl.place(x=80, y=300)
+
+    sec_full_name = ctk.CTkEntry(main_frame, width=1000, height=56, font=font1, corner_radius=10,placeholder_text="Detail Full Name".upper(), border_color=frame_clr)
+    sec_full_name.place(x=80, y=335)
+
+    sec_address = ctk.CTkEntry(main_frame, width=720, height=56, font=font1,corner_radius=10, placeholder_text="Address".upper(),  border_color=frame_clr)
+    sec_address.place(x=80, y=400)
+
+    sec_mobile_number = ctk.CTkEntry(main_frame, width=550, height=56, font=font1, corner_radius=10,placeholder_text="Mobile Number".upper(), border_color=frame_clr)
+    sec_mobile_number.place(x=80, y=465)
+
+    # Second Column
+    fec_date_of_birth = ctk.CTkEntry(main_frame, width=260, height=56, font=font1, corner_radius=10,placeholder_text="Date of Birth (AD)".upper(), border_color=frame_clr)
+    fec_date_of_birth.place(x=820, y=175)
+
+    fec_telephone_number = ctk.CTkEntry(main_frame, width=430, height=56, font=font1, corner_radius=10,placeholder_text="Telephone Number".upper(), border_color=frame_clr)
+    fec_telephone_number.place(x=650, y=240)
+
+    sec_date_of_birth = ctk.CTkEntry(main_frame, width=260, height=56, font=font1, corner_radius=10,placeholder_text="Date of Birth (AD)".upper(), border_color=frame_clr)
+    sec_date_of_birth.place(x=820, y=400)
+
+    sec_telephone_number = ctk.CTkEntry(main_frame, width=430, height=56, font=font1, corner_radius=10,placeholder_text="Telephone Number".upper(), border_color=frame_clr)
+    sec_telephone_number.place(x=650, y=465)
+
+    next_btn = ctk.CTkButton(main_frame, text="Next", width=130, height=45, corner_radius=10, font=next_btn_font, fg_color="#314C3B", bg_color=frame_clr,command=medical_test)
+    next_btn.place(x=980, y=535)
+    
+    back_btn = ctk.CTkButton(main_frame, text="back", width=130, height=45, corner_radius=10, font=next_btn_font, fg_color="#314C3B", bg_color=frame_clr,command=back_to_phase2_part1)
+    back_btn.place(x=30,y=535)
+    
+def show_medical_date():
+    main_frame.destroy()
+    t7 = Thread(target=medi_date_lbl)
+    t7.start()
+    main_Frame.destroy()
+
+def show_physical_date():
+    main_frame.destroy()
+    t7 = Thread(target=Phy_ass_lbl)
+    t7.start()
+    main_Frame.destroy()
+
+def show_education_date():
+    main_frame.destroy()
+    t7 = Thread(target=edu_ass_lbl)
+    t7.start()
+    main_Frame.destroy()
+    
+def show_int_date():
+    main_frame.destroy()
+    t7 = Thread(target=int_ass_lbl)
+    t7.start()
+    main_Frame.destroy()
+
+def phase3():
+    
+    global main_frame, medical_btn, Physical_ass_btn, educational_ass_btn, intervie_btn
+    # create a main frame
+    main_frame = ctk.CTkFrame(root, width=941, height=575, corner_radius=30, bg_color="transparent")
+    main_frame.grid(row=0, column=1, padx=170, pady=146)
+    
+    part3_lbl = Label(main_frame, text="Phase 3", font=phase_font, bg=frame_clr, fg='#6B7273')
+    part3_lbl.place(x= 400, y= 20)
+    
+    medical_btn = ctk.CTkButton(main_frame, 
+                                text="Medical",
+                                width=691,
+                                height=71,
+                                corner_radius=10,
+                                font=part1_font,
+                                fg_color="#2D8A69",
+                                text_color="white",
+                                command=show_medical_date)
+    medical_btn.place(x= 140, y= 97)
+    Physical_ass_btn = ctk.CTkButton(main_frame, 
+                                text="Physical Assessments",
+                                width=691,
+                                height=71,
+                                corner_radius=10,
+                                font=part1_font,
+                                fg_color="#2D8A69",
+                                text_color="white",
+                                command=show_physical_date)
+    Physical_ass_btn.place(x= 140, y= 199)
+    educational_ass_btn = ctk.CTkButton(main_frame, 
+                                text="Educational Assessments",
+                                width=691,
+                                height=71,
+                                corner_radius=10,
+                                font=part1_font,
+                                fg_color="#2D8A69",
+                                text_color="white",
+                                command=show_education_date)
+    educational_ass_btn.place(x= 140, y= 310)
+    intervie_btn = ctk.CTkButton(main_frame, 
+                                text="Interview",
+                                width=691,
+                                height=71,
+                                corner_radius=10,
+                                font=part1_font,
+                                fg_color="#2D8A69",
+                                text_color="white",
+                                command=show_int_date)
+    intervie_btn.place(x= 140, y= 403)
+    
+    back_btn = ctk.CTkButton(main_frame, text="back", width=130, height=45, corner_radius=10, font=next_btn_font, fg_color="#314C3B", bg_color=frame_clr,command=back_to_phase2_part2)
+    back_btn.place(x=30,y=510)
+
+    finish_btn = ctk.CTkButton(main_frame, text="Finish", width=130, height=45, corner_radius=10, font=next_btn_font, fg_color="#314C3B", bg_color=frame_clr,command=logout)
+    finish_btn.place(x=700,y=510)
+      
+def medi_date_lbl():
+    global main_frame
+    # create a main frame
+    main_frame = ctk.CTkFrame(root, width=941, height=282, corner_radius=30, bg_color="transparent")
+    main_frame.grid(row=0, column=1, padx=170, pady=146)
+    
+    part3_lbl = Label(main_frame, text="Phase 3", font=phase_font, bg=frame_clr, fg='#6B7273')
+    part3_lbl.place(x= 400, y= 20)
+    
+    medical_date_lbl = Label(main_frame, text="Medical Date: ", font=part1_font, bg=frame_clr, fg='black', width=20, height=2)
+    medical_date_lbl.place(x= 190, y= 100)
+    
+    display_date_lbl = Label(main_frame, text="Year-Month-Day", font=part1_font, bg='white', fg='black', width=20, height=2)
+    display_date_lbl.place(x= 380, y= 100)
+    
+    back_btn = ctk.CTkButton(main_frame, text="back", width=130, height=45, corner_radius=10, font=next_btn_font, fg_color="#314C3B", bg_color=frame_clr,command=back_to_phase3)
+    back_btn.place(x=30,y=220)
+
+def Phy_ass_lbl():
+    global main_frame
+    # create a main frame
+    main_frame = ctk.CTkFrame(root, width=941, height=282, corner_radius=30, bg_color="transparent")
+    main_frame.grid(row=0, column=1, padx=170, pady=146)
+    
+    part3_lbl = Label(main_frame, text="Phase 3", font=phase_font, bg=frame_clr, fg='#6B7273')
+    part3_lbl.place(x= 400, y= 20)
+    
+    Physical_ass_lbl_lbl = Label(main_frame, text="Physical Assessments", font=part1_font, bg=frame_clr, fg='black', width=20, height=2)
+    Physical_ass_lbl_lbl.place(x= 150, y= 100)
+    
+    display_date_lbl = Label(main_frame, text="Year-Month-Day", font=part1_font, bg='white', fg='black', width=20, height=2)
+    display_date_lbl.place(x= 390, y= 100)
+    
+    back_btn = ctk.CTkButton(main_frame, text="back", width=130, height=45, corner_radius=10, font=next_btn_font, fg_color="#314C3B", bg_color=frame_clr,command=back_to_phase3)
+    back_btn.place(x=30,y=220)
+
+def edu_ass_lbl():
+    global main_frame
+    # create a main frame
+    main_frame = ctk.CTkFrame(root, width=941, height=282, corner_radius=30, bg_color="transparent")
+    main_frame.grid(row=0, column=1, padx=170, pady=146)
+    
+    part3_lbl = Label(main_frame, text="Phase 3", font=phase_font, bg=frame_clr, fg='#6B7273')
+    part3_lbl.place(x= 400, y= 20)
+    
+    Physical_ass_lbl_lbl = Label(main_frame, text="Educational Assessments", font=part1_font, bg=frame_clr, fg='black', width=20, height=2)
+    Physical_ass_lbl_lbl.place(x= 150, y= 100)
+    
+    display_date_lbl = Label(main_frame, text="Year-Month-Day", font=part1_font, bg='white', fg='black', width=20, height=2)
+    display_date_lbl.place(x= 390, y= 100)
+
+    back_btn = ctk.CTkButton(main_frame, text="back", width=130, height=45, corner_radius=10, font=next_btn_font, fg_color="#314C3B", bg_color=frame_clr,command=back_to_phase3)
+    back_btn.place(x=30,y=220)
+
+    
+def int_ass_lbl():
+
+    global main_frame
+    # create a main frame
+    main_frame = ctk.CTkFrame(root, width=941, height=282, corner_radius=30, bg_color="transparent")
+    main_frame.grid(row=0, column=1, padx=170, pady=146)
+    
+    part3_lbl = Label(main_frame, text="Phase 3", font=phase_font, bg=frame_clr, fg='#6B7273')
+    part3_lbl.place(x= 400, y= 20)
+    
+    Physical_ass_lbl_lbl = Label(main_frame, text="Interview", font=part1_font, bg=frame_clr, fg='black', width=20, height=2)
+    Physical_ass_lbl_lbl.place(x= 150, y= 100)
+    
+    display_date_lbl = Label(main_frame, text="Year-Month-Day", font=part1_font, bg='white', fg='black', width=20, height=2)
+    display_date_lbl.place(x= 390, y= 100)
+
+    back_btn = ctk.CTkButton(main_frame, text="back", width=130, height=45, corner_radius=10, font=next_btn_font, fg_color="#314C3B", bg_color=frame_clr,command=back_to_phase3)
+    back_btn.place(x=30,y=220)
+
 # Save Login Information
 def save_login():
     global username, password
@@ -361,58 +665,57 @@ def save_login():
     finally:
         conn.close()
 
-
 # Login Frame
 def create_login_frame():
-    
+
     global main_Frame, username, password
     main_Frame = ctk.CTkFrame(master=root, width=555, height=431, corner_radius=30)
     main_Frame.grid(row=0, column=1, padx=350, pady=150)
-    
+
     login_label = Label(main_Frame, text="Login", font=font3, bg=frame_clr, fg=background)
     login_label.place(x=200, y=18)
-    
+
     username = ctk.CTkEntry(main_Frame, width=487, height=56, corner_radius=10, font=font1,
                             fg_color=background, text_color=framefg, placeholder_text="Username",
                             placeholder_text_color=framefg)
     username.place(x=40, y=130)
-    
+
     password = ctk.CTkEntry(main_Frame, width=487, height=56, corner_radius=10, font=font1, show="*",
                             fg_color=background, text_color=framefg, placeholder_text="Password",
                             placeholder_text_color=framefg)
     password.place(x=40, y=210)
-    
+
     login_Btn = ctk.CTkButton(main_Frame, text="Login", width=120, height=40, corner_radius=10, font=font2,
                               command=save_login, fg_color="#314C3B")
     login_Btn.place(x=200, y=290)
-    
+
     forgot_Btn = ctk.CTkButton(main_Frame, text="Forgot Password?", font=font2, text_color=background,
                                fg_color=frame_clr, command=lambda: print("Forgot Password"),
                                hover_color=frame_clr)
     forgot_Btn.place(x=40, y=360)
-    
+
     new_Account_Btn = ctk.CTkButton(main_Frame, text="Don't have Account?", font=font2, text_color=background,
                                     fg_color=frame_clr, command=threading, hover_color=frame_clr)
     new_Account_Btn.place(x=350, y=360)
-    
+
     try:
         imageOne = ImageTk.PhotoImage(Image.open("Assets/logo.png").resize((150, 115)))
         logo_icon = Label(root, image=imageOne, bg=background)
         logo_icon.image = imageOne
         logo_icon.place(x=20, y=0)
-        
+
         imageThree = ImageTk.PhotoImage(Image.open("Assets/user.png").resize((31, 31)))
         User_icon = Label(main_Frame, image=imageThree, bg=background)
         User_icon.image = imageThree
         User_icon.place(x=470, y=139)
-        
+
         imageTwo = ImageTk.PhotoImage(Image.open("Assets/password.png").resize((31, 31)))
         password_icon = Label(main_Frame, image=imageTwo, bg=background)
         password_icon.image = imageTwo
         password_icon.place(x=470, y=218)
     except Exception as e:
         messagebox.showerror("Image Error", str(e))
-        
+
 initialize_database()
 create_login_frame() # create login frame
 
