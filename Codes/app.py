@@ -56,7 +56,7 @@ frame_clr = "#DBDBDB"
 
 font1 = ("Arial", 20)
 font2 = ("Trebuchet MS", 15, "bold")
-font3 = ("Trebuchet MS", 50, "bold")
+font3 = ("Trebuchet MS", 40, "bold")
 
 font1 = ("Arial", 20) # for the entry fields, buttons
 logout_font = ("Trebuchet MS", 15, "bold") # for the forget password and register label
@@ -220,7 +220,7 @@ def save_registration():
             messagebox.showerror("Registration Error", "Email already exists. Please use a different email.")
             return
 
-        # Retrieve values from entry widgets
+        # Retrieve values from entry widgets 
         name = name_entry.get()
         password = password_entry.get()
         dob = dob_entry.get()
@@ -266,41 +266,45 @@ def send_registration_email(email, name, password, phone, dob):
         print(f"Failed to send email. Error: {e}")
 
 def logout():
-    main_frame.destroy()
     logout_btn.destroy()
+    main_frame.destroy()
     t3 = Thread(target=create_login_frame)
     t3.start()
-
     
 def open_phase2_part1():
     main_frame.destroy()
     t4 = Thread(target=phase2_part1)
     t4.start()
     main_Frame.destroy()
+    admin_btn.destroy()
     
 def open_phase2_part2():
     main_frame.destroy()
     t5 = Thread(target=phase2_part2)
     t5.start()
     main_Frame.destroy()
+    admin_btn.destroy()
     
 def medical_test():
     main_frame.destroy()
     t6 = Thread(target=phase3)
     t6.start()
     main_Frame.destroy()
+    admin_btn.destroy()
     
 def back_to_phase3():
     main_frame.destroy()
     t6 = Thread(target=phase3)
     t6.start()
     main_Frame.destroy()
+    admin_btn.destroy()
 
 def back_to_phase1():
     main_frame.destroy()
     t6 = Thread(target=open_phase1)
     t6.start()
     main_Frame.destroy()
+    admin_btn.destroy()
     
 def back_to_phase2_part1():
     main_frame.destroy()
@@ -317,6 +321,9 @@ def back_to_phase2_part2():
 # Phase 1    
 def open_phase1():
     global main_frame, root, logout_btn
+    cursor_icon1.destroy() # destroy the cursor icon
+    admin_btn.destroy() # destroy the admin button
+    main_Frame.destroy() # destroy the main frame 
     
     # create a main frame
     main_frame = ctk.CTkFrame(root, width=1157, height=600, corner_radius=30, bg_color="transparent")
@@ -490,27 +497,42 @@ def show_medical_date():
     t7 = Thread(target=medi_date_lbl)
     t7.start()
     main_Frame.destroy()
+    admin_btn.destroy()
 
 def show_physical_date():
     main_frame.destroy()
     t7 = Thread(target=Phy_ass_lbl)
     t7.start()
     main_Frame.destroy()
+    admin_btn.destroy()
 
 def show_education_date():
     main_frame.destroy()
     t7 = Thread(target=edu_ass_lbl)
     t7.start()
     main_Frame.destroy()
+    admin_btn.destroy()
     
 def show_int_date():
     main_frame.destroy()
     t7 = Thread(target=int_ass_lbl)
     t7.start()
     main_Frame.destroy()
-
-def phase3():
+    admin_btn.destroy()
     
+def open_admin():
+    main_Frame.destroy()
+    admin_btn.destroy()
+    t8 = Thread(target=create_login_admin)
+    t8.start()
+    
+def open_user():
+    main_Frame.destroy()
+    user_btn.destroy()
+    t9 = Thread(target=create_login_frame)
+    t9.start()
+    
+def phase3():
     global main_frame, medical_btn, Physical_ass_btn, educational_ass_btn, intervie_btn
     # create a main frame
     main_frame = ctk.CTkFrame(root, width=941, height=575, corner_radius=30, bg_color="transparent")
@@ -664,16 +686,14 @@ def save_login():
         messagebox.showerror("Database Error", str(e))
     finally:
         conn.close()
-
 # Login Frame
 def create_login_frame():
-
-    global main_Frame, username, password
+    global main_Frame, username, password, admin_btn, cursor_icon1, admin_btn
     main_Frame = ctk.CTkFrame(master=root, width=555, height=431, corner_radius=30)
     main_Frame.grid(row=0, column=1, padx=350, pady=150)
 
     login_label = Label(main_Frame, text="Login", font=font3, bg=frame_clr, fg=background)
-    login_label.place(x=200, y=18)
+    login_label.place(x=230, y=18)
 
     username = ctk.CTkEntry(main_Frame, width=487, height=56, corner_radius=10, font=font1,
                             fg_color=background, text_color=framefg, placeholder_text="Username",
@@ -698,23 +718,55 @@ def create_login_frame():
                                     fg_color=frame_clr, command=threading, hover_color=frame_clr)
     new_Account_Btn.place(x=350, y=360)
 
+    admin_btn = ctk.CTkButton(root, text="Admin", font=font3, text_color='white', fg_color=background,
+                            command=open_admin, hover_color=background)
+    admin_btn.place(x=1050, y=20)
     try:
-        imageOne = ImageTk.PhotoImage(Image.open("Assets/logo.png").resize((150, 115)))
-        logo_icon = Label(root, image=imageOne, bg=background)
-        logo_icon.image = imageOne
-        logo_icon.place(x=20, y=0)
-
-        imageThree = ImageTk.PhotoImage(Image.open("Assets/user.png").resize((31, 31)))
-        User_icon = Label(main_Frame, image=imageThree, bg=background)
-        User_icon.image = imageThree
-        User_icon.place(x=470, y=139)
-
-        imageTwo = ImageTk.PhotoImage(Image.open("Assets/password.png").resize((31, 31)))
-        password_icon = Label(main_Frame, image=imageTwo, bg=background)
-        password_icon.image = imageTwo
-        password_icon.place(x=470, y=218)
+        image_cr = ImageTk.PhotoImage(Image.open("Assets/Cursor.png").resize((30, 30)))
+        cursor_icon1 = Label(root, image=image_cr, bg=background)
+        cursor_icon1.image = image_cr
+        cursor_icon1.place(x=1170, y=70) 
     except Exception as e:
         messagebox.showerror("Image Error", str(e))
+
+def create_login_admin():
+    cursor_icon1.destroy()
+    global main_Frame, username, password, user_btn
+    main_Frame = ctk.CTkFrame(master=root, width=555, height=431, corner_radius=30)
+    main_Frame.grid(row=0, column=0, padx=350, pady=150)
+
+    login_label = Label(main_Frame, text="Login", font=font3, bg=frame_clr, fg=background)
+    login_label.place(x=230, y=18)
+
+    username = ctk.CTkEntry(main_Frame, width=487, height=56, corner_radius=10, font=font1,
+                            fg_color="#1050FF", text_color=framefg, placeholder_text="Username",
+                            placeholder_text_color=framefg)
+    username.place(x=40, y=130)
+
+    password = ctk.CTkEntry(main_Frame, width=487, height=56, corner_radius=10, font=font1, show="*",
+                            fg_color="#1050FF", text_color=framefg, placeholder_text="Password",
+                            placeholder_text_color=framefg)
+    password.place(x=40, y=210)
+
+    login_Btn = ctk.CTkButton(main_Frame, text="Login", width=120, height=40, corner_radius=10, font=font2,
+                              command="", fg_color="#1050FF", hover_color="#3276FF", text_color="white")
+    login_Btn.place(x=200, y=290)
+    
+    user_btn = ctk.CTkButton(root, text="User", font=font3, text_color='white', fg_color=background,
+                              command=open_user, hover_color=background)
+    user_btn.place(x=1050, y=20)
+    
+txt_lbl = ctk.CTkLabel(root, text="The British Army", font=("Arial", 20), fg_color=background, text_color="White")  
+txt_lbl.place(x=8, y=93)
+
+try:
+    imageOne = ImageTk.PhotoImage(Image.open("Assets/British.png").resize((80, 80)))
+    logo_icon = Label(root, image=imageOne, bg=background)
+    logo_icon.image = imageOne
+    logo_icon.place(x=30, y=8)
+except Exception as e:
+    messagebox.showerror("Image Error", str(e))
+    
 
 initialize_database()
 create_login_frame() # create login frame
