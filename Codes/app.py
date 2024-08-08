@@ -8,6 +8,9 @@ import re
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from backend import initialize_db, save_admin
+from tkinter import ttk  # Add this at the beginning of your file if not already included
+
 
 # Initialize database and create user table if it doesn't exist
 def initialize_database():
@@ -270,6 +273,7 @@ def logout():
     main_frame.destroy()
     t3 = Thread(target=create_login_frame)
     t3.start()
+
     
 def open_phase2_part1():
     main_frame.destroy()
@@ -317,83 +321,87 @@ def back_to_phase2_part2():
     t6 = Thread(target=phase2_part2)
     t6.start()
     main_Frame.destroy()
-    
+
+
 # Phase 1    
 def open_phase1():
-    global main_frame, root, logout_btn
+    global main_frame, root, logout_btn, part1_lbl
     cursor_icon1.destroy() # destroy the cursor icon
     admin_btn.destroy() # destroy the admin button
     main_Frame.destroy() # destroy the main frame 
     
     # create a main frame
-    main_frame = ctk.CTkFrame(root, width=1157, height=600, corner_radius=30, bg_color="transparent")
+    main_frame = ctk.CTkFrame(root, width=1157, height=650, corner_radius=30, bg_color="transparent")
     main_frame.grid(row=0, column=1, padx=61, pady=150)
+    
+    part1 = Label(main_frame, text="Phase 1".upper(), font=phase_font, bg=frame_clr, fg='black')
+    part1.place(x=565, y=20)
     
     # Entry Fields for Application Form
     # First Column
     first_name = ctk.CTkEntry(main_frame, width=486, height=56, font=font1, placeholder_text="First / middle Names", border_color=frame_clr)
-    first_name.place(x=80, y=25)
+    first_name.place(x=80, y=80)
     
     passport_no = ctk.CTkEntry(main_frame, width=486, height=56, font=font1, placeholder_text="Passport Number", border_color=frame_clr)
-    passport_no.place(x=80, y=110)
+    passport_no.place(x=80, y=165)
     
     nnp_no = ctk.CTkEntry(main_frame, width=486, height=56, font=font1, placeholder_text="NNP Number",  border_color=frame_clr)
-    nnp_no.place(x=80, y=195)
+    nnp_no.place(x=80, y=250)
     
     father_name = ctk.CTkEntry(main_frame, width=486, height=56, font=font1, placeholder_text="Father's Name", border_color=frame_clr)
-    father_name.place(x=80, y=280)
+    father_name.place(x=80, y=335)
     
     mother_name = ctk.CTkEntry(main_frame, width=486, height=56, font=font1, placeholder_text="Mother's Name", border_color=frame_clr)
-    mother_name.place(x=80, y=365)
+    mother_name.place(x=80, y=420)
     
     see_year = ctk.CTkEntry(main_frame, width=486, height=56, font=font1, placeholder_text="SEE Year", border_color=frame_clr)
-    see_year.place(x=80, y=450)
+    see_year.place(x=80, y=505)
     
     # Second Column
     
     surname = ctk.CTkEntry(main_frame, width=197, height=56, font=font1, placeholder_text="Surname", border_color=frame_clr)
-    surname.place(x=640, y=25)
+    surname.place(x=640, y=80)
     
     main_thar = ctk.CTkEntry(main_frame, width=197, height=56, font=font1, placeholder_text="Main Thar", border_color=frame_clr)
-    main_thar.place(x=640, y=110)
+    main_thar.place(x=640, y=165)
     
     attepmpt = ctk.CTkEntry(main_frame, width=197, height=56, font=font1, placeholder_text="Attempt", border_color=frame_clr)
-    attepmpt.place(x=640, y=195)
+    attepmpt.place(x=640, y=250)
     
     religion = ctk.CTkEntry(main_frame, width=197, height=56, font=font1, placeholder_text="Religion", border_color=frame_clr)
-    religion.place(x=640, y=280)
+    religion.place(x=640, y=335)
     
     district = ctk.CTkEntry(main_frame, width=197, height=56, font=font1, placeholder_text="District", border_color=frame_clr)
-    district.place(x=640, y=365)
+    district.place(x=640, y=420)
     
     village = ctk.CTkEntry(main_frame, width=197, height=56, font=font1, placeholder_text="Village", border_color=frame_clr)
-    village.place(x=640, y=450)
+    village.place(x=640, y=505)
     
     # Third Column
     dob_ad = ctk.CTkEntry(main_frame, width=208, height=56, font=font1, placeholder_text="Date of Birth(AD)", border_color=frame_clr)
-    dob_ad.place(x=900, y=25)
+    dob_ad.place(x=900, y=80)
     
     dob_bd = ctk.CTkEntry(main_frame, width=208, height=56, font=font1, placeholder_text="Date of Birth(BD)", border_color=frame_clr)
-    dob_bd.place(x=900, y=110)
+    dob_bd.place(x=900, y=165)
     
     contact_no = ctk.CTkEntry(main_frame, width=208, height=56, font=font1, placeholder_text="Contact Number", border_color=frame_clr)
-    contact_no.place(x=900, y=195)
+    contact_no.place(x=900, y=250)
     
     kin_contact = ctk.CTkEntry(main_frame, width=208, height=56, font=font1, placeholder_text="Kin's Contact Number", border_color=frame_clr)
-    kin_contact.place(x=900, y=280)
+    kin_contact.place(x=900, y=335)
     
     see_gpa = ctk.CTkEntry(main_frame, width=208, height=56, font=font1, placeholder_text="SEE GPA", border_color=frame_clr)
-    see_gpa.place(x=900, y=365)
+    see_gpa.place(x=900, y=420)
     
     blood_grp = ctk.CTkEntry(main_frame, width=208, height=56, font=font1, placeholder_text="Blood Group", border_color=frame_clr)
-    blood_grp.place(x=900, y=450)
+    blood_grp.place(x=900, y=505)
     
-    # Log out button
+    # Log out button)
     logout_btn = ctk.CTkButton(root, text="Log Out", width=100, height=40, font=font2, command=logout, fg_color="#314C3B", hover_color=background)
     logout_btn.place(x=1150, y=10)
     
     next_btn = ctk.CTkButton(main_frame, text="Next", width=120, height=40, corner_radius=10, font=font2, fg_color="#314C3B", bg_color=frame_clr,command=open_phase2_part1)
-    next_btn.place(x=500, y=540)
+    next_btn.place(x=550, y=585)
     
 # Phase 2 part one
 def phase2_part1():
@@ -494,43 +502,41 @@ def phase2_part2():
     
 def show_medical_date():
     main_frame.destroy()
-    t7 = Thread(target=medi_date_lbl)
-    t7.start()
+    t7 = Thread(target=medi_date_lbl).start()
     main_Frame.destroy()
     admin_btn.destroy()
 
 def show_physical_date():
     main_frame.destroy()
-    t7 = Thread(target=Phy_ass_lbl)
-    t7.start()
+    t7 = Thread(target=Phy_ass_lbl).start()
     main_Frame.destroy()
     admin_btn.destroy()
 
 def show_education_date():
     main_frame.destroy()
-    t7 = Thread(target=edu_ass_lbl)
-    t7.start()
+    t7 = Thread(target=edu_ass_lbl).start()
     main_Frame.destroy()
     admin_btn.destroy()
     
 def show_int_date():
     main_frame.destroy()
-    t7 = Thread(target=int_ass_lbl)
-    t7.start()
+    t7 = Thread(target=int_ass_lbl).start()
     main_Frame.destroy()
     admin_btn.destroy()
     
 def open_admin():
     main_Frame.destroy()
     admin_btn.destroy()
-    t8 = Thread(target=create_login_admin)
-    t8.start()
+    t8 = Thread(target=create_login_admin).start()
     
 def open_user():
     main_Frame.destroy()
     user_btn.destroy()
-    t9 = Thread(target=create_login_frame)
-    t9.start()
+    t9 = Thread(target=create_login_frame).start()
+    
+def dashboard():
+    main_frame.destroy()
+    t10 = Thread(target=admin_dashboard).start()
     
 def phase3():
     global main_frame, medical_btn, Physical_ass_btn, educational_ass_btn, intervie_btn
@@ -728,37 +734,214 @@ def create_login_frame():
         cursor_icon1.place(x=1170, y=70) 
     except Exception as e:
         messagebox.showerror("Image Error", str(e))
-
+    
 def create_login_admin():
+    global main_Frame, username_admin, password_admin, user_btn
     cursor_icon1.destroy()
-    global main_Frame, username, password, user_btn
+    
     main_Frame = ctk.CTkFrame(master=root, width=555, height=431, corner_radius=30)
     main_Frame.grid(row=0, column=0, padx=350, pady=150)
 
-    login_label = Label(main_Frame, text="Login", font=font3, bg=frame_clr, fg=background)
+    login_label = Label(main_Frame, text="Login", font=font3, bg=frame_clr, fg='#020202')
     login_label.place(x=230, y=18)
 
-    username = ctk.CTkEntry(main_Frame, width=487, height=56, corner_radius=10, font=font1,
-                            fg_color="#1050FF", text_color=framefg, placeholder_text="Username",
+    username_admin = ctk.CTkEntry(main_Frame, width=487, height=56, corner_radius=10, font=font1,
+                            fg_color="#020202", text_color=framefg, placeholder_text="Username",
                             placeholder_text_color=framefg)
-    username.place(x=40, y=130)
+    username_admin.place(x=40, y=130)
 
-    password = ctk.CTkEntry(main_Frame, width=487, height=56, corner_radius=10, font=font1, show="*",
-                            fg_color="#1050FF", text_color=framefg, placeholder_text="Password",
+    password_admin = ctk.CTkEntry(main_Frame, width=487, height=56, corner_radius=10, font=font1, show="*",
+                            fg_color="#020202", text_color=framefg, placeholder_text="Password",
                             placeholder_text_color=framefg)
-    password.place(x=40, y=210)
+    password_admin.place(x=40, y=210)
 
     login_Btn = ctk.CTkButton(main_Frame, text="Login", width=120, height=40, corner_radius=10, font=font2,
-                              command="", fg_color="#1050FF", hover_color="#3276FF", text_color="white")
+                              command=lambda: save_admin(username_admin.get(), password_admin.get(), admin_dashboard), fg_color="#020202", hover_color="#3276FF", text_color="white")
     login_Btn.place(x=200, y=290)
     
     user_btn = ctk.CTkButton(root, text="User", font=font3, text_color='white', fg_color=background,
                               command=open_user, hover_color=background)
     user_btn.place(x=1050, y=20)
-    
+
 txt_lbl = ctk.CTkLabel(root, text="The British Army", font=("Arial", 20), fg_color=background, text_color="White")  
 txt_lbl.place(x=8, y=93)
+def logout_admin():
+    main_frame.destroy()
+    logout_btn_admin.destroy()
+    t11 = Thread(target=create_login_frame)
+    t11.start()
 
+# def admin_dashboard():
+#     global main_frame, admin_lbl, logout_btn_admin
+#     main_Frame.destroy()
+#     user_btn.destroy()
+    
+    
+#     main_frame = ctk.CTkFrame(root, width=941, height=575, corner_radius=20, bg_color="transparent")
+#     main_frame.grid(row=0, column=1, padx=120, pady=146)
+    
+#     admin_lbl = Label(master=root, text="Dashboard", font=("Trebuchet MS", 40, "bold"), bg=background, fg='white')
+#     admin_lbl.place(x=526, y=76)
+    
+#     # button for Show Details, Updates Details, Delete Details and User Assessments Data
+#     show_details_btn = ctk.CTkButton(master=main_frame, text="Show Details", width=20, height=2, font=font1, fg_color=background, corner_radius=5)
+#     show_details_btn.grid(row=0, column=0, padx=60, pady=30)
+    
+#     update_details_btn = ctk.CTkButton(master=main_frame, text="Update Details", width=20, height=2, font=font1,fg_color=background,corner_radius=5)
+#     update_details_btn.grid(row=0, column=1, padx=60, pady=30)
+#     
+#     delete_details_btn = ctk.CTkButton(master=main_frame, text="Delete Details", width=20, height=2, font=font1, fg_color=background, corner_radius=5)
+#     delete_details_btn.grid(row=0, column=2, padx=60, pady=30)
+    
+#     user_assessments_data_btn = ctk.CTkButton(master=main_frame, text="User Assessments Data", width=20, height=2, font=font1, fg_color=background, corner_radius=5)
+#     user_assessments_data_btn.grid(row=0, column=3, padx=60, pady=30)
+    
+#     # Log out button)
+#     logout_btn_admin = ctk.CTkButton(root, text="Log Out", width=100, height=40, font=font2, command=logout_admin, fg_color="#314C3B", hover_color=background)
+#     logout_btn_admin.place(x=1150, y=10)
+# IMP:
+def fetch_user_details(details_tree):
+    try:
+        conn = db.connect("database.db")
+        cursor = conn.cursor()
+        cursor.execute("SELECT username, name_1, dob_1, phone_1 FROM user")
+        records = cursor.fetchall()
+        print("Fetched records:", records)  # Debugging output to check what is fetched
+
+        # Clear existing data in the tree
+        details_tree.delete(*details_tree.get_children())  # Ensure all children are removed
+
+        # Insert new data into the tree
+        for record in records:
+            print("Inserting record:", record)  # Debugging output to check what is being inserted
+            details_tree.insert('', 'end', values=record)
+    except db.Error as e:
+        messagebox.showerror("Database Error", str(e))
+    finally:
+        conn.close()
+
+def delete_user(Username):
+    if not Username:
+        messagebox.showerror("Error", "Please enter an email address.")
+        return
+
+    # Verification step before deletion
+    if not messagebox.askyesno("Verify", "Are you sure you want to delete this user?"):
+        return
+
+    try:
+        conn = db.connect("database.db")
+        cursor = conn.cursor()
+        print(f"Attempting to delete user with Username: {Username}")  # Debugging output
+        cursor.execute("DELETE FROM user WHERE Username = ?", (Username,))
+        conn.commit()
+        print(f"Rows affected: {cursor.rowcount}")  # Debugging output
+        if cursor.rowcount == 0:
+            messagebox.showinfo("Result", "No user found with that email.")
+        else:
+            messagebox.showinfo("Success", "User deleted successfully.")
+            fetch_user_details(details_tree)  # Refresh the details display
+    except db.Error as e:
+        messagebox.showerror("Database Error", str(e))
+    finally:
+        conn.close()
+def admin_dashboard():
+    global main_frame, admin_lbl, logout_btn_admin, details_tree, email_entry, update_frame, update_email_entry, update_name_entry, update_dob_entry, update_phone_entry
+    # ... existing code ...
+    main_Frame.destroy()
+    user_btn.destroy()
+    
+    main_frame = ctk.CTkFrame(root, width=941, height=575, corner_radius=20, bg_color="transparent")
+    main_frame.grid(row=0, column=1, padx=20, pady=130)
+    
+    dashboard_lbl = Label(main_frame, text="Dashboard", font=("Trebuchet MS", 20, "bold"), bg=frame_clr, fg='black')
+    dashboard_lbl.place(x=400, y=20)
+        
+    show_details_btn = ctk.CTkButton(master=main_frame, text="Show Details", command=lambda: fetch_user_details(details_tree))
+    show_details_btn.place(x=50, y=50)
+    
+    columns = ('username', 'name', 'dob', 'phone')
+    details_tree = ttk.Treeview(main_frame, columns=columns, show='headings')
+    for col in columns:
+        details_tree.heading(col, text=col.capitalize())  # Ensure headings are set
+    details_tree.place(x=50, y=100)
+
+    email_entry = ctk.CTkEntry(main_frame, width=300, placeholder_text="Enter user email to delete", border_color=background)
+    email_entry.place(x=55, y=330)
+    
+    delete_btn = ctk.CTkButton(main_frame, text="Delete User", command=lambda: delete_user(email_entry.get()), fg_color="#FF6347", hover_color="#FF4500")
+    delete_btn.place(x=375, y=330)
+
+    logout_btn_admin = ctk.CTkButton(root, text="Log Out", width=100, height=40, font=font2, command=logout_admin, fg_color="#314C3B", hover_color=background)
+    logout_btn_admin.place(x=1150, y=10)
+
+    # Frame for updates
+    update_frame = ctk.CTkFrame(main_frame, width=500, height=300, corner_radius=10, bg_color=frame_clr)
+    update_frame.place(x=50, y=370)
+
+    # Entry widgets for updating user data
+    update_email_entry = ctk.CTkEntry(update_frame, width=300, placeholder_text="Enter email to update", border_color=background)
+    update_email_entry.grid(row=0, column=0, padx=10, pady=10)
+
+    update_name_entry = ctk.CTkEntry(update_frame, width=300, placeholder_text="New Name", border_color=background)
+    update_name_entry.grid(row=1, column=0, padx=10, pady=10)
+
+    update_dob_entry = ctk.CTkEntry(update_frame, width=300, placeholder_text="New DOB", border_color=background)
+    update_dob_entry.grid(row=2, column=0, padx=10, pady=10)
+
+    update_phone_entry = ctk.CTkEntry(update_frame, width=300, placeholder_text="New Phone", border_color=background)
+    update_phone_entry.grid(row=3, column=0, padx=10, pady=10)
+
+    # Button to fetch data into entry widgets
+    fetch_data_btn = ctk.CTkButton(update_frame, text="Fetch Data", command=lambda: fetch_data_for_update(update_email_entry.get()))
+    fetch_data_btn.grid(row=0, column=1, padx=10, pady=10)
+
+    # Button to update data
+    update_data_btn = ctk.CTkButton(update_frame, text="Update Data", command=lambda: update_user_data(update_email_entry.get(), update_name_entry.get(), update_dob_entry.get(), update_phone_entry.get()))
+    update_data_btn.grid(row=1, column=1, columnspan=2, padx=10, pady=10)
+
+def fetch_data_for_update(email):
+    if not email:
+        messagebox.showerror("Error", "Please enter an email address.")
+        return
+    try:
+        conn = db.connect("database.db")
+        cursor = conn.cursor()
+        cursor.execute("SELECT name_1, dob_1, phone_1 FROM user WHERE username = ?", (email,))
+        user_data = cursor.fetchone()
+        if user_data:
+            update_name_entry.delete(0, END)
+            update_name_entry.insert(0, user_data[0])
+            update_dob_entry.delete(0, END)
+            update_dob_entry.insert(0, user_data[1])
+            update_phone_entry.delete(0, END)
+            update_phone_entry.insert(0, user_data[2])
+        else:
+            messagebox.showinfo("Result", "No user found with that email.")
+    except db.Error as e:
+        messagebox.showerror("Database Error", str(e))
+    finally:
+        conn.close()
+
+def update_user_data(email, name, dob, phone):
+    if not (email and name and dob and phone):
+        messagebox.showerror("Error", "All fields must be filled out.")
+        return
+    try:
+        conn = db.connect("database.db")
+        cursor = conn.cursor()
+        cursor.execute("UPDATE user SET name_1 = ?, dob_1 = ?, phone_1 = ? WHERE username = ?", (name, dob, phone, email))
+        conn.commit()
+        if cursor.rowcount == 0:
+            messagebox.showinfo("Result", "No user found with that email.")
+        else:
+            messagebox.showinfo("Success", "User updated successfully.")
+            fetch_user_details(details_tree)  # Refresh the details display
+    except db.Error as e:
+        messagebox.showerror("Database Error", str(e))
+    finally:
+        conn.close()
+        
 try:
     imageOne = ImageTk.PhotoImage(Image.open("Assets/British.png").resize((80, 80)))
     logo_icon = Label(root, image=imageOne, bg=background)
@@ -769,6 +952,7 @@ except Exception as e:
     
 
 initialize_database()
+initialize_db()  # Initialize the database and create the admin table
 create_login_frame() # create login frame
 
 root.mainloop()
