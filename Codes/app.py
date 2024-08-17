@@ -9,7 +9,9 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from backend import initialize_db, save_admin
-from tkinter import ttk  # Add this at the beginning of your file if not already included
+from tkinter import ttk # Add this at the beginning of your file if not already included
+import datetime
+from datetime import timedelta  
 
 
 # Initialize database and create user table if it doesn't exist
@@ -269,8 +271,8 @@ def send_registration_email(email, name, password, phone, dob):
         print(f"Failed to send email. Error: {e}")
 
 def logout():
-    logout_btn.destroy()
     main_frame.destroy()
+    logout_btn.destroy()
     t3 = Thread(target=create_login_frame)
     t3.start()
 
@@ -788,17 +790,17 @@ def health_details_frame():
     heading_lbl.place(x=235, y=20)
 
     # Entry Fields for Health Details
-    height_lbl = Label(main_frame, text="Height (in inches):".upper(), font=font1, bg=frame_clr)
+    height_lbl = Label(main_frame, text="Height (in inches): (60, 75) ".upper(), font=font1, bg=frame_clr)
     height_lbl.place(x=80, y=75)
     height_entry = ctk.CTkEntry(main_frame, width=1000, height=56, font=font1, corner_radius=10, placeholder_text="Enter Height in Inches".upper(), border_color=frame_clr)
     height_entry.place(x=80, y=110)
 
-    bp_lbl = Label(main_frame, text="Blood Pressure Level:".upper(), font=font1, bg=frame_clr)
+    bp_lbl = Label(main_frame, text="Blood Pressure Level:(90/60, 120/80)  # systolic/diastolic".upper(), font=font1, bg=frame_clr)
     bp_lbl.place(x=80, y=175)
     bp_entry = ctk.CTkEntry(main_frame, width=1000, height=56, font=font1, corner_radius=10, placeholder_text="Enter Blood Pressure Level".upper(), border_color=frame_clr)
     bp_entry.place(x=80, y=210)
 
-    sugar_lbl = Label(main_frame, text="Sugar Level:".upper(), font=font1, bg=frame_clr)
+    sugar_lbl = Label(main_frame, text="Sugar Level:(70, 100)".upper(), font=font1, bg=frame_clr)
     sugar_lbl.place(x=80, y=275)
     sugar_entry = ctk.CTkEntry(main_frame, width=1000, height=56, font=font1, corner_radius=10, placeholder_text="Enter Sugar Level".upper(), border_color=frame_clr)
     sugar_entry.place(x=80, y=310)
@@ -808,6 +810,18 @@ def health_details_frame():
     submit_btn.place(x=80, y=375)
 
 # Function to handle the submission of health details
+# Define standard ranges for health parameters
+STANDARD_HEIGHT_RANGE = (60, 75)  # in inches
+STANDARD_BP_RANGE = (90/60, 120/80)  # systolic/diastolic
+STANDARD_SUGAR_RANGE = (70, 100)  # mg/dL (fasting)
+
+# Function to handle the submission of health details
+# Example standard ranges for validation
+STANDARD_HEIGHT_RANGE = (48, 84)  # example: 4 feet to 7 feet in inches
+STANDARD_BP_RANGE = (90, 120)     # example: systolic range
+STANDARD_BP_DIASTOLIC_RANGE = (60, 80)  # example: diastolic range
+STANDARD_SUGAR_RANGE = (70, 130)  # example: fasting blood sugar in mg/dL
+
 def submit_health_details():
     global main_frame, height_entry, bp_entry, sugar_entry
 
@@ -819,18 +833,52 @@ def submit_health_details():
         messagebox.showerror("Error", "All fields must be filled out.")
         return
 
+    # Validate height
+    try:
+        height = float(height)
+        if not STANDARD_HEIGHT_RANGE[0] <= height <= STANDARD_HEIGHT_RANGE[1]:
+            messagebox.showerror("Error", f"Height should be between {STANDARD_HEIGHT_RANGE[0]} and {STANDARD_HEIGHT_RANGE[1]} inches for further eligibility.")
+            return
+    except ValueError:
+        messagebox.showerror("Error", "Height must be a number.")
+        return
+
+    # Validate blood pressure
+    try:
+        systolic, diastolic = map(int, bp.split('/'))
+        if not (STANDARD_BP_RANGE[0] <= systolic <= STANDARD_BP_RANGE[1]):
+            messagebox.showerror("Error", f"Systolic blood pressure should be between {STANDARD_BP_RANGE[0]} and {STANDARD_BP_RANGE[1]} for further eligibility.")
+            return
+        if not (STANDARD_BP_DIASTOLIC_RANGE[0] <= diastolic <= STANDARD_BP_DIASTOLIC_RANGE[1]):
+            messagebox.showerror("Error", f"Diastolic blood pressure should be between {STANDARD_BP_DIASTOLIC_RANGE[0]} and {STANDARD_BP_DIASTOLIC_RANGE[1]} for further eligibility.")
+            return
+    except ValueError:
+        messagebox.showerror("Error", "Blood pressure must be in the format systolic/diastolic (e.g., 120/80).")
+        return
+
+    # Validate sugar level
+    try:
+        sugar = int(sugar)
+        if not STANDARD_SUGAR_RANGE[0] <= sugar <= STANDARD_SUGAR_RANGE[1]:
+            messagebox.showerror("Error", f"Sugar level should be between {STANDARD_SUGAR_RANGE[0]} and {STANDARD_SUGAR_RANGE[1]} mg/dL (fasting) for further eligibility.")
+            return
+    except ValueError:
+        messagebox.showerror("Error", "Sugar level must be a number.")
+        return
+
+    # If all validations pass, proceed to save data
     try:
         conn = db.connect("database.db")
         cursor = conn.cursor()
         cursor.execute("INSERT INTO health_details (height, blood_pressure, sugar_level) VALUES (?, ?, ?)", (height, bp, sugar))
         conn.commit()
         messagebox.showinfo("Success", "Health details submitted successfully.")
-        
+
         # Disable the entry fields to prevent further editing
         height_entry.configure(state='disabled')
         bp_entry.configure(state='disabled')
         sugar_entry.configure(state='disabled')
-        
+
         # Destroy the main frame
         main_frame.destroy()
         t11 = Thread(target=phase3).start()
@@ -838,6 +886,7 @@ def submit_health_details():
         messagebox.showerror("Database Error", str(e))
     finally:
         conn.close()
+
 
 
 def phase3():
@@ -893,82 +942,125 @@ def phase3():
     back_btn = ctk.CTkButton(main_frame, text="back", width=130, height=45, corner_radius=10, font=next_btn_font, fg_color="#314C3B", bg_color=frame_clr,command=back_to_phase2_part2)
     back_btn.place(x=30,y=510)
 
-    finish_btn = ctk.CTkButton(main_frame, text="Finish", width=130, height=45, corner_radius=10, font=next_btn_font, fg_color="#314C3B", bg_color=frame_clr,command=logout)
+    finish_btn = ctk.CTkButton(main_frame, text="Finish", width=130, height=45, corner_radius=10, font=next_btn_font, fg_color="#314C3B", bg_color=frame_clr,command=generate_assessment_dates_file)
     finish_btn.place(x=700,y=510)
-      
-def medi_date_lbl():
+
+    #after the submission, this function helps to gererate txt file, of all the dates that have shows before.
+def generate_assessment_dates_file():
+    dates = get_assessment_dates()
+
+    with open("assessment_dates.txt", "w") as file:
+        file.write("Assessment Dates:\n")
+        file.write(f"Medical Date: {dates['medical_date']}\n")
+        file.write(f"Physical Assessment Date: {dates['physical_date']}\n")
+        file.write(f"Educational Assessment Date: {dates['education_date']}\n")
+        file.write(f"Interview Date: {dates['interview_date']}\n")
+
+    messagebox.showinfo("Success", "Assessment dates file generated successfully! You will be logged out shortly")
+    logout()  
+
+def get_assessment_dates():
+    current_date = datetime.datetime.now()
+    medical_date = current_date + timedelta(days=2)
+    physical_date = current_date + timedelta(days=4)
+    education_date = current_date + timedelta(days=6)
+    interview_date = current_date + timedelta(days=8)
+    
+    return {
+        "medical_date": medical_date.strftime('%Y-%m-%d'),
+        "physical_date": physical_date.strftime('%Y-%m-%d'),
+        "education_date": education_date.strftime('%Y-%m-%d'),
+        "interview_date": interview_date.strftime('%Y-%m-%d')
+    }
+
+def show_medical_date():
+    dates = get_assessment_dates()
+    medical_date = dates["medical_date"]
+    medi_date_lbl(medical_date)
+
+def show_physical_date():
+    dates = get_assessment_dates()
+    physical_date = dates["physical_date"]
+    Phy_ass_lbl(physical_date)
+
+def show_education_date():
+    dates = get_assessment_dates()
+    education_date = dates["education_date"]
+    edu_ass_lbl(education_date)
+
+def show_int_date():
+    dates = get_assessment_dates()
+    interview_date = dates["interview_date"]
+    int_ass_lbl(interview_date)
+
+def medi_date_lbl(medical_date):
     global main_frame
-    # create a main frame
-    main_frame = ctk.CTkFrame(root, width=941, height=282, corner_radius=30, bg_color="transparent")
+    main_frame = ctk.CTkFrame(root, width=800, height=282, corner_radius=20, fg_color="#37373d", bg_color="#37373d")
     main_frame.grid(row=0, column=1, padx=170, pady=146)
     
-    part3_lbl = Label(main_frame, text="Phase 3", font=phase_font, bg=frame_clr, fg='#6B7273')
-    part3_lbl.place(x= 400, y= 20)
+    part3_lbl = Label(main_frame, text="Get your medical date", font=25, bg=frame_clr, fg='#6B7273')
+    part3_lbl.place(x=300, y=20)
     
-    medical_date_lbl = Label(main_frame, text="Medical Date: ", font=part1_font, bg=frame_clr, fg='black', width=20, height=2)
-    medical_date_lbl.place(x= 190, y= 100)
+    medical_date_lbl = Label(main_frame, text="Medical Date: ", font=25, bg=frame_clr, fg='black', width=20, height=2)
+    medical_date_lbl.place(x=150, y=100)
     
-    display_date_lbl = Label(main_frame, text="Year-Month-Day", font=part1_font, bg='white', fg='black', width=20, height=2)
-    display_date_lbl.place(x= 380, y= 100)
+    display_date_lbl = Label(main_frame, text=medical_date, font=25, bg='white', fg='black', width=20, height=2)
+    display_date_lbl.place(x=400, y=100)
     
-    back_btn = ctk.CTkButton(main_frame, text="back", width=130, height=45, corner_radius=10, font=next_btn_font, fg_color="#314C3B", bg_color=frame_clr,command=back_to_phase3)
-    back_btn.place(x=30,y=220)
+    back_btn = ctk.CTkButton(main_frame, text="back", width=130, height=45, corner_radius=10, font=next_btn_font, fg_color="#314C3B", bg_color=frame_clr, command=back_to_phase3)
+    back_btn.place(x=30, y=220)
 
-def Phy_ass_lbl():
+def Phy_ass_lbl(physical_date):
     global main_frame
-    # create a main frame
-    main_frame = ctk.CTkFrame(root, width=941, height=282, corner_radius=30, bg_color="transparent")
+    main_frame = ctk.CTkFrame(root, width=800, height=282, corner_radius=20,fg_color="#37373d", bg_color="#37373d")
     main_frame.grid(row=0, column=1, padx=170, pady=146)
     
-    part3_lbl = Label(main_frame, text="Phase 3", font=phase_font, bg=frame_clr, fg='#6B7273')
-    part3_lbl.place(x= 400, y= 20)
+    part3_lbl = Label(main_frame, text="Get Your Physical Assessments Date", font=25, bg=frame_clr, fg='#6B7273')
+    part3_lbl.place(x=260, y=20)
     
-    Physical_ass_lbl_lbl = Label(main_frame, text="Physical Assessments", font=part1_font, bg=frame_clr, fg='black', width=20, height=2)
-    Physical_ass_lbl_lbl.place(x= 150, y= 100)
+    Physical_ass_lbl_lbl = Label(main_frame, text="Physical Assessments", font=25, bg=frame_clr, fg='black', width=20, height=2)
+    Physical_ass_lbl_lbl.place(x=150, y=100)
     
-    display_date_lbl = Label(main_frame, text="Year-Month-Day", font=part1_font, bg='white', fg='black', width=20, height=2)
-    display_date_lbl.place(x= 390, y= 100)
+    display_date_lbl = Label(main_frame, text=physical_date, font=25, bg='white', fg='black', width=20, height=2)
+    display_date_lbl.place(x=400, y=100)
     
-    back_btn = ctk.CTkButton(main_frame, text="back", width=130, height=45, corner_radius=10, font=next_btn_font, fg_color="#314C3B", bg_color=frame_clr,command=back_to_phase3)
-    back_btn.place(x=30,y=220)
+    back_btn = ctk.CTkButton(main_frame, text="back", width=130, height=45, corner_radius=10, font=next_btn_font, fg_color="#314C3B", bg_color=frame_clr, command=back_to_phase3)
+    back_btn.place(x=30, y=220)
 
-def edu_ass_lbl():
+def edu_ass_lbl(education_date):
     global main_frame
-    # create a main frame
-    main_frame = ctk.CTkFrame(root, width=941, height=282, corner_radius=30, bg_color="transparent")
+    main_frame = ctk.CTkFrame(root, width=800, height=282, corner_radius=30, fg_color="#37373d", bg_color="#37373d")
     main_frame.grid(row=0, column=1, padx=170, pady=146)
     
-    part3_lbl = Label(main_frame, text="Phase 3", font=phase_font, bg=frame_clr, fg='#6B7273')
-    part3_lbl.place(x= 400, y= 20)
+    part3_lbl = Label(main_frame, text="Get Your Educational Assessments Date", font=25, bg=frame_clr, fg='#6B7273')
+    part3_lbl.place(x=250, y=20)
     
-    Physical_ass_lbl_lbl = Label(main_frame, text="Educational Assessments", font=part1_font, bg=frame_clr, fg='black', width=20, height=2)
-    Physical_ass_lbl_lbl.place(x= 150, y= 100)
+    Physical_ass_lbl_lbl = Label(main_frame, text="Educational Assessments", font=25, bg=frame_clr, fg='black', width=20, height=2)
+    Physical_ass_lbl_lbl.place(x=150, y=100)
     
-    display_date_lbl = Label(main_frame, text="Year-Month-Day", font=part1_font, bg='white', fg='black', width=20, height=2)
-    display_date_lbl.place(x= 390, y= 100)
+    display_date_lbl = Label(main_frame, text=education_date, font=25, bg='white', fg='black', width=20, height=2)
+    display_date_lbl.place(x=400, y=100)
 
-    back_btn = ctk.CTkButton(main_frame, text="back", width=130, height=45, corner_radius=10, font=next_btn_font, fg_color="#314C3B", bg_color=frame_clr,command=back_to_phase3)
-    back_btn.place(x=30,y=220)
+    back_btn = ctk.CTkButton(main_frame, text="back", width=130, height=45, corner_radius=10, font=next_btn_font, fg_color="#314C3B", bg_color=frame_clr, command=back_to_phase3)
+    back_btn.place(x=30, y=220)
 
-    
-def int_ass_lbl():
-
+def int_ass_lbl(interview_date):
     global main_frame
-    # create a main frame
-    main_frame = ctk.CTkFrame(root, width=941, height=282, corner_radius=30, bg_color="transparent")
+    main_frame = ctk.CTkFrame(root, width=800, height=282, corner_radius=30, fg_color="#37373d", bg_color="#37373d")
     main_frame.grid(row=0, column=1, padx=170, pady=146)
     
-    part3_lbl = Label(main_frame, text="Phase 3", font=phase_font, bg=frame_clr, fg='#6B7273')
-    part3_lbl.place(x= 400, y= 20)
+    part3_lbl = Label(main_frame, text="Get Your Interview Date", font=25, bg=frame_clr, fg='#6B7273')
+    part3_lbl.place(x=300, y=20)
     
-    Physical_ass_lbl_lbl = Label(main_frame, text="Interview", font=part1_font, bg=frame_clr, fg='black', width=20, height=2)
-    Physical_ass_lbl_lbl.place(x= 150, y= 100)
+    Physical_ass_lbl_lbl = Label(main_frame, text="Interview", font=25, bg=frame_clr, fg='black', width=20, height=2)
+    Physical_ass_lbl_lbl.place(x=150, y=100)
     
-    display_date_lbl = Label(main_frame, text="Year-Month-Day", font=part1_font, bg='white', fg='black', width=20, height=2)
-    display_date_lbl.place(x= 390, y= 100)
+    display_date_lbl = Label(main_frame, text=interview_date, font=25, bg='white', fg='black', width=20, height=2)
+    display_date_lbl.place(x=400, y=100)
 
-    back_btn = ctk.CTkButton(main_frame, text="back", width=130, height=45, corner_radius=10, font=next_btn_font, fg_color="#314C3B", bg_color=frame_clr,command=back_to_phase3)
-    back_btn.place(x=30,y=220)
+    back_btn = ctk.CTkButton(main_frame, text="back", width=130, height=45, corner_radius=10, font=next_btn_font, fg_color="#314C3B", bg_color=frame_clr, command=back_to_phase3)
+    back_btn.place(x=30, y=220)
+
 
 # Save Login Information
 def save_login():
@@ -1223,7 +1315,20 @@ try:
     logo_icon.place(x=30, y=8)
 except Exception as e:
     messagebox.showerror("Image Error", str(e))
+
+
+
+# Place this function with your other function definitions
+def go_to_phase3(event=None):
+    phase3()
     
+
+
+# this is code to by pass all the phase and directly goes to the phase 3
+root.bind('<Control-Shift-P>', go_to_phase3)
+
+
+
 
 if __name__ == "__main__":
     initialize_database()
