@@ -291,7 +291,7 @@ def open_phase2_part2():
     
 def medical_test():
     main_frame.destroy()
-    t6 = Thread(target=phase3)
+    t6 = Thread(target=health_details_frame)
     t6.start()
     main_Frame.destroy()
     admin_btn.destroy()
@@ -325,7 +325,7 @@ def back_to_phase2_part2():
 
 # Phase 1    
 def open_phase1():
-    global main_frame, root, logout_btn, part1_lbl
+    global main_frame, root, logout_btn, next_btn, part1, first_name, passport_no, nnp_no, father_name, mother_name, see_year, surname, main_thar, attepmpt, religion, district, village, dob_ad, dob_bd, contact_no, kin_contact, see_gpa, blood_grp
     cursor_icon1.destroy() # destroy the cursor icon
     admin_btn.destroy() # destroy the admin button
     main_Frame.destroy() # destroy the main frame 
@@ -400,12 +400,73 @@ def open_phase1():
     logout_btn = ctk.CTkButton(root, text="Log Out", width=100, height=40, font=font2, command=logout, fg_color="#314C3B", hover_color=background)
     logout_btn.place(x=1150, y=10)
     
-    next_btn = ctk.CTkButton(main_frame, text="Next", width=120, height=40, corner_radius=10, font=font2, fg_color="#314C3B", bg_color=frame_clr,command=open_phase2_part1)
+    next_btn = ctk.CTkButton(main_frame, text="Next", width=120, height=40, corner_radius=10, font=font2, fg_color="#314C3B", bg_color=frame_clr,command=submit_phase1_details)
     next_btn.place(x=550, y=585)
-    
+
+def initialize_phase1_table():
+    try:
+        conn = db.connect("database.db")
+        cursor = conn.cursor()
+        cursor.execute(
+            """
+            CREATE TABLE IF NOT EXISTS phase1_details (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                first_name TEXT,
+                passport_no TEXT,
+                nnp_no TEXT,
+                father_name TEXT,
+                mother_name TEXT
+            )
+            """
+        )
+        conn.commit()
+    except db.Error as e:
+        messagebox.showerror("Database Error", str(e))
+    finally:
+        conn.close()
+        
+def submit_phase1_details():
+    global main_frame, first_name, passport_no, nnp_no, father_name, mother_name
+
+    first_name_value = first_name.get()
+    passport_no_value = passport_no.get()
+    nnp_no_value = nnp_no.get()
+    father_name_value = father_name.get()
+    mother_name_value = mother_name.get()
+
+    if not (first_name_value and passport_no_value and nnp_no_value and father_name_value and mother_name_value):
+        messagebox.showerror("Error", "All fields must be filled out.")
+        return
+
+    try:
+        conn = db.connect("database.db")
+        cursor = conn.cursor()
+        cursor.execute("INSERT INTO phase1_details (first_name, passport_no, nnp_no, father_name, mother_name) VALUES (?, ?, ?, ?, ?)", 
+                       (first_name_value, passport_no_value, nnp_no_value, father_name_value, mother_name_value))
+        conn.commit()
+        messagebox.showinfo("Success", "Phase 1 details submitted successfully.")
+        
+        # Disable the entry fields to prevent further editing
+        first_name.configure(state='disabled')
+        passport_no.configure(state='disabled')
+        nnp_no.configure(state='disabled')
+        father_name.configure(state='disabled')
+        mother_name.configure(state='disabled')
+        
+        # Destroy the main frame and proceed to the next phase
+        main_frame.destroy()
+        t1 = Thread(target=open_phase2_part1)
+        t1.start()
+    except db.Error as e:
+        messagebox.showerror("Database Error", str(e))
+    finally:
+        conn.close()
+
+
+
 # Phase 2 part one
 def phase2_part1():
-    global main_frame
+    global main_frame, full_name, address, email, citizenship, date_of_birth, telephone_number
     # create a main frame
     main_frame = ctk.CTkFrame(root, width=1157, height=520, corner_radius=30, bg_color="transparent")
     main_frame.grid(row=0, column=1, padx=61, pady=140)
@@ -437,14 +498,84 @@ def phase2_part1():
     telephone_number = ctk.CTkEntry(main_frame, width=300, height=56, corner_radius=10,font=font1, placeholder_text="Telephone Number".upper(), border_color=frame_clr)
     telephone_number.place(x=780, y=280)
 
-    next_btn = ctk.CTkButton(main_frame, text="Next", width=130, height=45, corner_radius=10, font=next_btn_font, fg_color="#314C3B", bg_color=frame_clr,command=open_phase2_part2)
+    next_btn = ctk.CTkButton(main_frame, text="Next", width=130, height=45, corner_radius=10, font=next_btn_font, fg_color="#314C3B", bg_color=frame_clr,command=submit_phase2_part1_details)
     next_btn.place(x=980, y=455)
     
     back_btn = ctk.CTkButton(main_frame, text="back", width=130, height=45, corner_radius=10, font=next_btn_font, fg_color="#314C3B", bg_color=frame_clr,command=back_to_phase1)
     back_btn.place(x=30,y=445)
 
+
+def initialize_phase2_part1_table():
+    try:
+        conn = db.connect("database.db")
+        cursor = conn.cursor()
+        cursor.execute(
+            """
+            CREATE TABLE IF NOT EXISTS phase2_part1_details (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                full_name TEXT,
+                address TEXT,
+                email TEXT,
+                citizenship INTEGER,
+                date_of_birth TEXT,
+                telephone_number INTEGER
+            )
+            """
+        )
+        conn.commit()
+    except db.Error as e:
+        messagebox.showerror("Database Error", str(e))
+    finally:
+        conn.close()
+        
+def submit_phase2_part1_details():
+    global main_frame, full_name, address, email, citizenship, date_of_birth, telephone_number
+
+    field1 = full_name.get()
+    field2 = address.get()
+    field3 = email.get()
+    field4 = citizenship.get()
+    field5 = date_of_birth.get()
+    field6 = telephone_number.get()
+
+    if not (field1 and field2 and field3 and field4 and field5 and field6):
+        messagebox.showerror("Error", "All fields must be filled out.")
+        return
+
+    try:
+        conn = db.connect("database.db")
+        cursor = conn.cursor()
+        cursor.execute("INSERT INTO phase2_part1_details (full_name, address, email, citizenship, date_of_birth, telephone_number) VALUES (?, ?, ?, ?, ?, ?)", 
+                       (field1, field2, field3, field4, field5, field6))
+        conn.commit()
+        messagebox.showinfo("Success", "Phase 2 Part 1 details submitted successfully.")
+        
+        # Disable the entry fields to prevent further editing
+        full_name.configure(state='disabled')
+        address.configure(state='disabled')
+        email.configure(state='disabled')
+        citizenship.configure(state='disabled')
+        date_of_birth.configure(state='disabled')
+        telephone_number.configure(state='disabled')
+        
+        # Destroy the main frame and proceed to the next phase
+        main_frame.destroy()
+        t1 = Thread(target=open_phase2_part2)
+        t1.start()
+    except db.Error as e:
+        messagebox.showerror("Database Error", str(e))
+    finally:
+        conn.close()
+
+
+
+
+
+
+
+
 def phase2_part2():
-    global main_frame
+    global main_frame, fec_full_name, fec_address, fec_mobile_number, sec_full_name, sec_address, sec_mobile_number, fec_date_of_birth, fec_telephone_number, sec_date_of_birth, sec_telephone_number
     # create a main frame
     main_frame = ctk.CTkFrame(root, width=1157, height=590, corner_radius=30, bg_color="transparent")
     main_frame.grid(row=0, column=1, padx=61, pady=120)
@@ -494,12 +625,93 @@ def phase2_part2():
     sec_telephone_number = ctk.CTkEntry(main_frame, width=430, height=56, font=font1, corner_radius=10,placeholder_text="Telephone Number".upper(), border_color=frame_clr)
     sec_telephone_number.place(x=650, y=465)
 
-    next_btn = ctk.CTkButton(main_frame, text="Next", width=130, height=45, corner_radius=10, font=next_btn_font, fg_color="#314C3B", bg_color=frame_clr,command=medical_test)
+    next_btn = ctk.CTkButton(main_frame, text="Next", width=130, height=45, corner_radius=10, font=next_btn_font, fg_color="#314C3B", bg_color=frame_clr,command=submit_phase2_part2_details)
     next_btn.place(x=980, y=535)
     
     back_btn = ctk.CTkButton(main_frame, text="back", width=130, height=45, corner_radius=10, font=next_btn_font, fg_color="#314C3B", bg_color=frame_clr,command=back_to_phase2_part1)
     back_btn.place(x=30,y=535)
     
+    
+    
+
+def initialize_phase2_part2_table():
+    try:
+        conn = db.connect("database.db")
+        cursor = conn.cursor()
+        cursor.execute(
+            """
+            CREATE TABLE IF NOT EXISTS phase2_part2_details (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                fec_full_name TEXT,
+                fec_address TEXT,
+                fec_mobile_number TEXT,
+                fec_date_of_birth TEXT,
+                fec_telephone_number TEXT,
+                sec_full_name TEXT,
+                sec_address TEXT,
+                sec_mobile_number TEXT,
+                sec_date_of_birth TEXT,
+                sec_telephone_number TEXT
+            )
+            """
+        )
+        conn.commit()
+    except db.Error as e:
+        messagebox.showerror("Database Error", str(e))
+    finally:
+        conn.close()
+
+def submit_phase2_part2_details():
+    global main_frame, fec_full_name, fec_address, fec_mobile_number, sec_full_name, sec_address, sec_mobile_number, fec_date_of_birth, fec_telephone_number, sec_date_of_birth, sec_telephone_number
+
+    # Collecting data from the form
+    emergency_contact_name = fec_full_name.get()
+    emergency_contact_relationship = fec_address.get()
+    emergency_contact_phone = fec_mobile_number.get()
+    emergency_contact_address = fec_date_of_birth.get()
+    emergency_contact_secondary_name = sec_full_name.get()
+    emergency_contact_secondary_relationship = sec_address.get()
+    emergency_contact_secondary_phone = sec_mobile_number.get()
+    emergency_contact_secondary_address = sec_date_of_birth.get()
+    emergency_contact_telephone = fec_telephone_number.get()
+    emergency_contact_secondary_telephone = sec_telephone_number.get()
+
+    # Check if all fields are filled
+    if not (emergency_contact_name and emergency_contact_relationship and emergency_contact_phone and emergency_contact_address and emergency_contact_secondary_name and emergency_contact_secondary_relationship and emergency_contact_secondary_phone and emergency_contact_secondary_address):
+        messagebox.showerror("Error", "All fields must be filled out.")
+        return
+
+    try:
+        conn = db.connect("database.db")
+        cursor = conn.cursor()
+        # Insert data into the database
+        cursor.execute("INSERT INTO phase2_part2_details (fec_full_name, fec_address, fec_mobile_number, fec_date_of_birth, fec_telephone_number, sec_full_name, sec_address, sec_mobile_number, sec_date_of_birth, sec_telephone_number) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
+                       (emergency_contact_name, emergency_contact_relationship, emergency_contact_phone, emergency_contact_address, emergency_contact_telephone, emergency_contact_secondary_name, emergency_contact_secondary_relationship, emergency_contact_secondary_phone, emergency_contact_secondary_address, emergency_contact_secondary_telephone))
+        conn.commit()
+        messagebox.showinfo("Success", "Phase 2 Part 2 details submitted successfully.")
+        
+        # Disable the entry fields to prevent further editing
+        fec_full_name.configure(state='disabled')
+        fec_address.configure(state='disabled')
+        fec_mobile_number.configure(state='disabled')
+        fec_date_of_birth.configure(state='disabled')
+        fec_telephone_number.configure(state='disabled')
+        sec_full_name.configure(state='disabled')
+        sec_address.configure(state='disabled')
+        sec_mobile_number.configure(state='disabled')
+        sec_date_of_birth.configure(state='disabled')
+        sec_telephone_number.configure(state='disabled')
+        
+        # Destroy the main frame and proceed to the next phase
+        main_frame.destroy()
+        t1 = Thread(target=medical_test)
+        t1.start()
+    except db.Error as e:
+        messagebox.showerror("Database Error", str(e))
+    finally:
+        conn.close()
+
+
 def show_medical_date():
     main_frame.destroy()
     t7 = Thread(target=medi_date_lbl).start()
@@ -537,7 +749,97 @@ def open_user():
 def dashboard():
     main_frame.destroy()
     t10 = Thread(target=admin_dashboard).start()
-    
+# Function to create a frame for health details
+
+
+def initialize_health_details_table():
+    try:
+        conn = db.connect("database.db")
+        cursor = conn.cursor()
+        cursor.execute(
+            """
+            CREATE TABLE IF NOT EXISTS health_details (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                height TEXT,
+                blood_pressure TEXT,
+                sugar_level TEXT
+            )
+            """
+        )
+        conn.commit()
+    except db.Error as e:
+        messagebox.showerror("Database Error", str(e))
+    finally:
+        conn.close()
+
+def health_details_frame():
+    global main_frame, height_entry, bp_entry, sugar_entry
+
+    # Destroy the current main frame if it exists
+    # if main_frame:
+    #     main_frame.destroy()
+
+    # Create a new main frame
+    main_frame = ctk.CTkFrame(root, width=1157, height=650, corner_radius=30, bg_color="transparent")
+    main_frame.grid(row=0, column=1, padx=61, pady=150)
+
+    # Heading for the frame
+    heading_lbl = Label(main_frame, text="Health Details - Must be Completed by the Applicant:".upper(), font=heading_font, bg=frame_clr)
+    heading_lbl.place(x=235, y=20)
+
+    # Entry Fields for Health Details
+    height_lbl = Label(main_frame, text="Height (in inches):".upper(), font=font1, bg=frame_clr)
+    height_lbl.place(x=80, y=75)
+    height_entry = ctk.CTkEntry(main_frame, width=1000, height=56, font=font1, corner_radius=10, placeholder_text="Enter Height in Inches".upper(), border_color=frame_clr)
+    height_entry.place(x=80, y=110)
+
+    bp_lbl = Label(main_frame, text="Blood Pressure Level:".upper(), font=font1, bg=frame_clr)
+    bp_lbl.place(x=80, y=175)
+    bp_entry = ctk.CTkEntry(main_frame, width=1000, height=56, font=font1, corner_radius=10, placeholder_text="Enter Blood Pressure Level".upper(), border_color=frame_clr)
+    bp_entry.place(x=80, y=210)
+
+    sugar_lbl = Label(main_frame, text="Sugar Level:".upper(), font=font1, bg=frame_clr)
+    sugar_lbl.place(x=80, y=275)
+    sugar_entry = ctk.CTkEntry(main_frame, width=1000, height=56, font=font1, corner_radius=10, placeholder_text="Enter Sugar Level".upper(), border_color=frame_clr)
+    sugar_entry.place(x=80, y=310)
+
+    # Submit Button
+    submit_btn = ctk.CTkButton(main_frame, text="Submit", command=submit_health_details)
+    submit_btn.place(x=80, y=375)
+
+# Function to handle the submission of health details
+def submit_health_details():
+    global main_frame, height_entry, bp_entry, sugar_entry
+
+    height = height_entry.get()
+    bp = bp_entry.get()
+    sugar = sugar_entry.get()
+
+    if not (height and bp and sugar):
+        messagebox.showerror("Error", "All fields must be filled out.")
+        return
+
+    try:
+        conn = db.connect("database.db")
+        cursor = conn.cursor()
+        cursor.execute("INSERT INTO health_details (height, blood_pressure, sugar_level) VALUES (?, ?, ?)", (height, bp, sugar))
+        conn.commit()
+        messagebox.showinfo("Success", "Health details submitted successfully.")
+        
+        # Disable the entry fields to prevent further editing
+        height_entry.configure(state='disabled')
+        bp_entry.configure(state='disabled')
+        sugar_entry.configure(state='disabled')
+        
+        # Destroy the main frame
+        main_frame.destroy()
+        t11 = Thread(target=phase3).start()
+    except db.Error as e:
+        messagebox.showerror("Database Error", str(e))
+    finally:
+        conn.close()
+
+
 def phase3():
     global main_frame, medical_btn, Physical_ass_btn, educational_ass_btn, intervie_btn
     # create a main frame
@@ -771,35 +1073,7 @@ def logout_admin():
     t11 = Thread(target=create_login_frame)
     t11.start()
 
-# def admin_dashboard():
-#     global main_frame, admin_lbl, logout_btn_admin
-#     main_Frame.destroy()
-#     user_btn.destroy()
-    
-    
-#     main_frame = ctk.CTkFrame(root, width=941, height=575, corner_radius=20, bg_color="transparent")
-#     main_frame.grid(row=0, column=1, padx=120, pady=146)
-    
-#     admin_lbl = Label(master=root, text="Dashboard", font=("Trebuchet MS", 40, "bold"), bg=background, fg='white')
-#     admin_lbl.place(x=526, y=76)
-    
-#     # button for Show Details, Updates Details, Delete Details and User Assessments Data
-#     show_details_btn = ctk.CTkButton(master=main_frame, text="Show Details", width=20, height=2, font=font1, fg_color=background, corner_radius=5)
-#     show_details_btn.grid(row=0, column=0, padx=60, pady=30)
-    
-#     update_details_btn = ctk.CTkButton(master=main_frame, text="Update Details", width=20, height=2, font=font1,fg_color=background,corner_radius=5)
-#     update_details_btn.grid(row=0, column=1, padx=60, pady=30)
-#     
-#     delete_details_btn = ctk.CTkButton(master=main_frame, text="Delete Details", width=20, height=2, font=font1, fg_color=background, corner_radius=5)
-#     delete_details_btn.grid(row=0, column=2, padx=60, pady=30)
-    
-#     user_assessments_data_btn = ctk.CTkButton(master=main_frame, text="User Assessments Data", width=20, height=2, font=font1, fg_color=background, corner_radius=5)
-#     user_assessments_data_btn.grid(row=0, column=3, padx=60, pady=30)
-    
-#     # Log out button)
-#     logout_btn_admin = ctk.CTkButton(root, text="Log Out", width=100, height=40, font=font2, command=logout_admin, fg_color="#314C3B", hover_color=background)
-#     logout_btn_admin.place(x=1150, y=10)
-# IMP:
+
 def fetch_user_details(details_tree):
     try:
         conn = db.connect("database.db")
@@ -951,8 +1225,12 @@ except Exception as e:
     messagebox.showerror("Image Error", str(e))
     
 
-initialize_database()
-initialize_db()  # Initialize the database and create the admin table
-create_login_frame() # create login frame
-
-root.mainloop()
+if __name__ == "__main__":
+    initialize_database()
+    initialize_health_details_table()
+    initialize_db()  # Initialize the database and create the admin table
+    create_login_frame() # create login frame
+    initialize_phase1_table()
+    initialize_phase2_part1_table()
+    initialize_phase2_part2_table()
+    root.mainloop()
