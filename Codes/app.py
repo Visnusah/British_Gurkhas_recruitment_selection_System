@@ -273,6 +273,7 @@ def send_registration_email(email, name, password, phone, dob):
 def logout():
     main_frame.destroy()
     logout_btn.destroy()
+    main_frame.destroy()
     t3 = Thread(target=create_login_frame)
     t3.start()
 
@@ -957,7 +958,8 @@ def generate_assessment_dates_file():
         file.write(f"Interview Date: {dates['interview_date']}\n")
 
     messagebox.showinfo("Success", "Assessment dates file generated successfully! You will be logged out shortly")
-    logout()  
+    logout()
+    
 
 def get_assessment_dates():
     current_date = datetime.datetime.now()
@@ -1060,6 +1062,75 @@ def int_ass_lbl(interview_date):
 
     back_btn = ctk.CTkButton(main_frame, text="back", width=130, height=45, corner_radius=10, font=next_btn_font, fg_color="#314C3B", bg_color=frame_clr, command=back_to_phase3)
     back_btn.place(x=30, y=220)
+    
+    
+def validate_email(email):
+    email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+    return re.match(email_regex, email) is not None
+
+def forgot_password():
+    def update_password():
+        email = email_entry.get()
+        new_password = new_password_entry.get()
+        confirm_password = confirm_password_entry.get()
+
+        if not email or not new_password or not confirm_password:
+            messagebox.showerror("Error", "All fields are required!")
+            return
+
+        if new_password != confirm_password:
+            messagebox.showerror("Error", "Passwords do not match!")
+            return
+
+        if not validate_email(email):
+            messagebox.showerror("Error", "Invalid email format!")
+            return
+
+        try:
+            conn = db.connect("database.db")
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM user WHERE username = ?", (email,))
+            user = cursor.fetchone()
+
+            if not user:
+                messagebox.showerror("Error", "No user found with that email!")
+                return
+
+            cursor.execute("UPDATE user SET password = ? WHERE username = ?", (new_password, email))
+            conn.commit()
+            messagebox.showinfo("Success", "Password updated successfully!")
+            forgot_pw_window.destroy()
+
+        except db.Error as e:
+            messagebox.showerror("Database Error", str(e))
+        finally:
+            conn.close()
+
+    forgot_pw_window = Toplevel(root)
+    forgot_pw_window.title("Forgot Password")
+    forgot_pw_window.geometry("400x350+300+250")
+
+    email_label = Label(forgot_pw_window, text="Email:")
+    email_label.pack(pady=10)
+    email_entry = Entry(forgot_pw_window, width=30)
+    email_entry.pack(pady=10)
+
+    new_password_label = Label(forgot_pw_window, text="New Password:")
+    new_password_label.pack(pady=10)
+    new_password_entry = Entry(forgot_pw_window, show="*", width=30)
+    new_password_entry.pack(pady=10)
+
+    confirm_password_label = Label(forgot_pw_window, text="Confirm Password:")
+    confirm_password_label.pack(pady=10)
+    confirm_password_entry = Entry(forgot_pw_window, show="*", width=30)
+    confirm_password_entry.pack(pady=10)
+
+    update_btn = Button(forgot_pw_window, text="Update Password", command=update_password)
+    update_btn.pack(pady=20)
+
+
+
+
 
 
 # Save Login Information
@@ -1096,7 +1167,7 @@ def create_login_frame():
     login_label.place(x=230, y=18)
 
     username = ctk.CTkEntry(main_Frame, width=487, height=56, corner_radius=10, font=font1,
-                            fg_color=background, text_color=framefg, placeholder_text="Username",
+                            fg_color=background, text_color=framefg, placeholder_text="User Email",
                             placeholder_text_color=framefg)
     username.place(x=40, y=130)
 
@@ -1110,7 +1181,7 @@ def create_login_frame():
     login_Btn.place(x=200, y=290)
 
     forgot_Btn = ctk.CTkButton(main_Frame, text="Forgot Password?", font=font2, text_color=background,
-                               fg_color=frame_clr, command=lambda: print("Forgot Password"),
+                               fg_color=frame_clr, command=forgot_password,
                                hover_color=frame_clr)
     forgot_Btn.place(x=40, y=360)
 
